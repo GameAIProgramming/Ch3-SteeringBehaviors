@@ -2,7 +2,7 @@
 
 #include "cocos2d.h"
 
-class HelloWorldScene : public cocos2d::Layer
+class HelloWorldScene : public cocos2d::LayerColor
 {
     
 private:
@@ -18,5 +18,5 @@ public:
     int getNextValidID()    { return _nextValidID++; }
     
     void initEntites();
-    
+    virtual void update(float dt) override;
 };

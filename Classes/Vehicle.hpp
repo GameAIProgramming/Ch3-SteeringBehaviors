@@ -10,6 +10,7 @@
 
 #include "MovingEntity.hpp"
 #include "cocos2d.h"
+#include "SteeringBehaviors.hpp"
 
 namespace realtrick
 {
@@ -20,7 +21,7 @@ namespace realtrick
     private:
         
         cocos2d::Scene*             _gameWorld;
-        
+        SteeringBehaviors*          _steering;
         
         Vehicle() = delete;
         Vehicle(const Vehicle&) = delete;
