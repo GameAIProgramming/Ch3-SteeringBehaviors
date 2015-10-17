@@ -18,11 +18,13 @@ Scene* HelloWorldScene::createScene()
 
 bool HelloWorldScene::init()
 {
-    if ( !Layer::init() )
+    if ( !LayerColor::initWithColor(Color4B::WHITE) )
     {
         return false;
     }
 
+    this->scheduleUpdate();
+    
     srand((unsigned int)time(nullptr));
     initEntites();
     
@@ -47,8 +49,21 @@ void HelloWorldScene::initEntites()
     for(auto &d : entities)
     {
         Sprite* entity = Sprite::create("Vehicle.png");
+        entity->setTag(d.second->getID());
         entity->setPosition(Vec2(d.second->getPos().x, d.second->getPos().y));
         _spriteManager->addChild(entity);
+    }
+}
+
+void HelloWorldScene::update(float dt)
+{
+    EntMgr.updateEntities(dt);
+
+    auto entities = EntMgr.getEntMap();
+    for(auto &d : entities)
+    {
+        Sprite* entity = (Sprite*)_spriteManager->getChildByTag(d.second->getID());
+        entity->setPosition(Vec2(d.second->getPos().x, d.second->getPos().y));
     }
 }
 

@@ -49,6 +49,8 @@ namespace realtrick
         
         void clamp(const Vector2& min, const Vector2& max);
         
+        void truncate(double max);
+        
         double getDistance(const Vector2& v) const;
         
         inline double getDistanceSq(const Vector2& v) const;

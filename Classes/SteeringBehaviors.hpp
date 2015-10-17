@@ -51,9 +51,17 @@ namespace realtrick
         
         Vector2                 _target;
         
+        Vector2 _seek(const Vector2& targetPos);
+        Vector2 _flee(const Vector2& targetPos);
+        Vector2 _arrive(const Vector2& targetPos, double deceleration);
+        
     public:
         
+        SteeringBehaviors(Vehicle* owner);
+        SteeringBehaviors(const SteeringBehaviors&) = delete;
+        SteeringBehaviors& operator=(const SteeringBehaviors&) = delete;
         
+        Vector2 calculate();
         
     };
     

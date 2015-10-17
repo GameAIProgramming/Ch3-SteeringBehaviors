@@ -28,6 +28,17 @@ namespace realtrick
     
     void Vehicle::update(float dt)
     {
+        Vector2 oldPos = getPos();
+        Vector2 steeringForce = _steering->calculate();
+        Vector2 acceleration = steeringForce / getMass();
         
+        _velocity += acceleration * dt;
+        _velocity.truncate(_maxSpeed);
+        _pos += _velocity * dt;
+        
+        if(_velocity.getLengthSq() > kMathEpsilonSq)
+        {
+            _heading = _velocity.getNormalized();
+        }
     }
 }

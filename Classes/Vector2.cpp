@@ -70,6 +70,15 @@ namespace realtrick
             y = max.y;
     }
     
+    void Vector2::truncate(double max)
+    {
+        if(getLength() > max)
+        {
+            normalize();
+            *this *= max;
+        }
+    }
+    
     double Vector2::getDistance(const Vector2& v) const
     {
         double dx = v.x - x;
