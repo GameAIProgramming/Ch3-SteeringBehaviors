@@ -11,14 +11,18 @@
 namespace realtrick
 {
     
-    Vehicle::Vehicle(int id) : MovingEntity(id)
+    Vehicle::Vehicle(cocos2d::Node* world, int id) : MovingEntity(id)
     {
+        _gameWorld = world;
         _type = EntityType::kVehicle;
+        _steering = new SteeringBehaviors(this);
     }
     
-    Vehicle::Vehicle(int id, const Vector2& pos, double radius) : MovingEntity(id, pos, radius)
+    Vehicle::Vehicle(cocos2d::Node* world, int id, const Vector2& pos, double radius) : MovingEntity(id, pos, radius)
     {
-        
+        _gameWorld = world;
+        _type = EntityType::kVehicle;
+        _steering = new SteeringBehaviors(this);
     }
     
     bool Vehicle::handleMessage(const Telegram& msg)

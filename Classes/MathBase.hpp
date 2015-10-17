@@ -17,3 +17,4 @@
 #define kMathPiover2                    1.57079632679489661923f
 #define kMathEpsilon                    0.000001f
 #define kMathEpsilonSq                  0.000000000001f
+#define kPie                            3.141592f

@@ -20,7 +20,7 @@ namespace realtrick
         
     private:
         
-        cocos2d::Scene*             _gameWorld;
+        cocos2d::Node*              _gameWorld;
         SteeringBehaviors*          _steering;
         
         Vehicle() = delete;
@@ -29,14 +29,19 @@ namespace realtrick
         
     public:
         
-        Vehicle(int id);
-        Vehicle(int id, const Vector2& pos, double radius);
+        Vehicle(cocos2d::Node* world, int id);
+        Vehicle(cocos2d::Node* world, int id, const Vector2& pos, double radius);
         
         virtual ~Vehicle()
-        {}
+        {
+            delete _steering;
+        }
         
         virtual bool handleMessage(const Telegram& msg) override;
         virtual void update(float dt) override;
+        
+        cocos2d::Node* getGameWorld() const             { return _gameWorld; }
+        SteeringBehaviors* getSteering() const          { return _steering; }
         
     };
     

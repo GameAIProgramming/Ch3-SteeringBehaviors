@@ -63,15 +63,20 @@ namespace realtrick
         // 여러개의 상태를 비트단위로 나눠서 저장하기 위한 변수.
         int                     _flag;
         
+        
+        double                  _weightSeek     = 1.0;
+        double                  _weightFlee     = 1.0;
+        double                  _weightArrive   = 1.0;
+        
     private:
         
         Vector2 _seek(const Vector2& targetPos);
         Vector2 _flee(const Vector2& targetPos);
         Vector2 _arrive(const Vector2& targetPos, double deceleration);
         
-        Vector2 _calculateWeightedSum();
-        Vector2 _calculatePrioritized();
-        Vector2 _calculatedDithered();
+        void _calculateWeightedSum();
+        void _calculatePrioritized();
+        void _calculatedDithered();
         
     public:
         
