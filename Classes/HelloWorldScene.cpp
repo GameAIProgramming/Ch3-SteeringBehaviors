@@ -46,14 +46,23 @@ void HelloWorldScene::initEntites()
     auto entities = EntMgr.getEntMap();
     for(auto &d : entities)
     {
-        Sprite* entity = Sprite::create();
-        
-        DrawNode* node = DrawNode::create();
-        node->drawDot(Vec2::ZERO, 10.0f, Color4F::RED);
-        node->setPosition(Vec2(5.0f, 5.0f));
-        entity->addChild(node);
-        
+        Sprite* entity = Sprite::create("Vehicle.png");
         entity->setPosition(Vec2(d.second->getPos().x, d.second->getPos().y));
         _spriteManager->addChild(entity);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
