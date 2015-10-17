@@ -22,10 +22,36 @@ namespace realtrick
         _targetEntity2 = nullptr;
         
         _target = Vector2::kZero;
+        _summingMethod = SummingMethod::kWeightedAverage;
+        
+        _flag = 0;
     }
     
     Vector2 SteeringBehaviors::calculate()
     {
+        _steeringForce.setZero();
+        
+        switch (_summingMethod)
+        {
+            case SummingMethod::kWeightedAverage:
+            {
+                break;
+            }
+            case SummingMethod::kPrioritized:
+            {
+                break;
+            }
+            case SummingMethod::kDithered:
+            {
+                break;
+            }
+            default:
+            {
+                _steeringForce = Vector2::kZero;
+                break;
+            }
+        }
+        
         return Vector2::kZero;
     }
     
@@ -44,4 +70,27 @@ namespace realtrick
         return Vector2::kZero;
     }
     
+    Vector2 _calculateWeightedSum()
+    {
+        
+        return Vector2::kZero;
+    }
+    
+    Vector2 _calculatePrioritized()
+    {
+        return Vector2::kZero;
+    }
+    
+    Vector2 _calculatedDithered()
+    {
+        return Vector2::kZero;
+    }
+    
 }
+
+
+
+
+
+
+
