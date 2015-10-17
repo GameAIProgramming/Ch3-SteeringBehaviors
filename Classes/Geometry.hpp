@@ -43,4 +43,6 @@ namespace realtrick
     
     };
 
+    float randFloat(float min, float max);
+    
 }

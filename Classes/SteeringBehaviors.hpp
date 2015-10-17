@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Vector2.hpp"
+#include "Mat3.hpp"
 
 namespace realtrick
 {
@@ -63,16 +64,36 @@ namespace realtrick
         // 여러개의 상태를 비트단위로 나눠서 저장하기 위한 변수.
         int                     _flag;
         
+        Vector2                 _wanderTarget;
+        double                  _wanderJitter;
+        double                  _wanderRadius;
+        double                  _wanderDistance;
+        
         
         double                  _weightSeek     = 1.0;
         double                  _weightFlee     = 1.0;
         double                  _weightArrive   = 1.0;
+        double                  _weightPursuit  = 1.0;
+        double                  _weightWander   = 1.0;
+        
+        
         
     private:
         
+        // 찾기
         Vector2 _seek(const Vector2& targetPos);
+        
+        // 달아나기
         Vector2 _flee(const Vector2& targetPos);
+        
+        // 도착하기
         Vector2 _arrive(const Vector2& targetPos, double deceleration);
+        
+        // 추적하기
+        Vector2 _pursuit(const Vehicle* evader);
+        
+        // 배회하기
+        Vector2 _wander();
         
         void _calculateWeightedSum();
         void _calculatePrioritized();
