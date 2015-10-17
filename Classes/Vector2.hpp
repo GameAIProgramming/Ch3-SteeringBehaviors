@@ -15,7 +15,7 @@ namespace realtrick
     
     class Vector2
     {
-        
+     
     public:
         
         double x, y;

@@ -32,6 +32,8 @@ namespace realtrick
     
     void Vehicle::update(float dt)
     {
+        _timeElapsed = dt;
+        
         Vector2 oldPos = getPos();
         Vector2 steeringForce = _steering->calculate();
         Vector2 acceleration = steeringForce / getMass();

@@ -23,6 +23,8 @@ namespace realtrick
         cocos2d::Node*              _gameWorld;
         SteeringBehaviors*          _steering;
         
+        float                       _timeElapsed;
+        
         Vehicle() = delete;
         Vehicle(const Vehicle&) = delete;
         Vehicle& operator=(const Vehicle&) = delete;
@@ -39,9 +41,10 @@ namespace realtrick
         
         virtual bool handleMessage(const Telegram& msg) override;
         virtual void update(float dt) override;
-        
+
         cocos2d::Node* getGameWorld() const             { return _gameWorld; }
         SteeringBehaviors* getSteering() const          { return _steering; }
+        float getTimeElapsed() const                    { return _timeElapsed; }
         
     };
     

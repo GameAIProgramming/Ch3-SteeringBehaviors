@@ -148,6 +148,13 @@ namespace realtrick
     
     const Rect Rect::kZero = Rect(0.0, 0.0, 0.0, 0.0);
     
+    float randFloat(float min, float max)
+    {
+        std::mt19937 re((unsigned int)time(nullptr));
+        std::uniform_real_distribution<float> urd(min, max);
+        return urd(re);
+    }
+    
 }
 
 
