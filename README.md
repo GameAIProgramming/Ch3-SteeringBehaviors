@@ -14,4 +14,5 @@ Based on **Cocos2d-x 3.8.1**.
 
 [http://cocos2d-x.org] (http://cocos2d-x.org)
 
-*그냥 만들어 봄*
+
+*그냥 만들어 봄 ^^*
