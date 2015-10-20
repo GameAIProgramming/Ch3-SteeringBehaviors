@@ -20,16 +20,6 @@ namespace realtrick
         }
     }
 
-    EntityManager::EntityManager()
-    {
-    }
-
-    EntityManager& EntityManager::getInstance()
-    {
-        static EntityManager instance;
-        return instance;
-    }
-
     BaseEntity* EntityManager::getEntityFromID(int id)
     {
         auto iter = _entityMap.find(id);

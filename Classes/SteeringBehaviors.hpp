@@ -11,10 +11,12 @@
 #include "Vector2.hpp"
 #include "Mat3.hpp"
 
+
 namespace realtrick
 {
     
     class Vehicle;
+    class BaseEntity;
     
     enum class SummingMethod : short
     {
@@ -70,11 +72,12 @@ namespace realtrick
         double                  _wanderDistance;
         
         
-        double                  _weightSeek     = 1.0;
-        double                  _weightFlee     = 1.0;
-        double                  _weightArrive   = 1.0;
-        double                  _weightPursuit  = 1.0;
-        double                  _weightWander   = 1.0;
+        double                  _weightSeek;
+        double                  _weightFlee;
+        double                  _weightArrive;
+        double                  _weightPursuit;
+        double                  _weightWander;
+        double                  _weightObstacleAvoidance;
         
         
         
@@ -94,6 +97,9 @@ namespace realtrick
         
         // 배회하기
         Vector2 _wander();
+        
+        // 장애물 피하기
+        Vector2 _obstacleAvoidance(const std::vector<BaseEntity*> obstacles);
         
         void _calculateWeightedSum();
         void _calculatePrioritized();

@@ -14,6 +14,9 @@ private:
     cocos2d::Sprite*                        _uiLayer;
     cocos2d::Sprite*                        _crossHair;
     
+    cocos2d::Sprite*                        _gameView;
+    cocos2d::Sprite*                        _optionView;
+    
 public:
     
     static cocos2d::Scene* createScene();

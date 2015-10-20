@@ -10,10 +10,15 @@
 #include "Vehicle.hpp"
 #include "HelloWorldScene.h"
 #include "Geometry.hpp"
+#include "Transformations.hpp"
+#include "ParamLoader.hpp"
 
 namespace realtrick
 {
     
+    //
+    // Constructor
+    //
     SteeringBehaviors::SteeringBehaviors(Vehicle* owner)
     {
         _vehicle = owner;
@@ -27,19 +32,26 @@ namespace realtrick
         
         _flag = 0;
         
-        _wanderDistance = 2.0;
-        _wanderJitter = 80.0;
-        _wanderRadius = 1.2;
+        _wanderDistance = Prm.getValueAsDouble("WanderDistance");
+        _wanderJitter = Prm.getValueAsDouble("WanderJitter");
+        _wanderRadius = Prm.getValueAsDouble("WanderRadius");
         
+        _weightSeek = Prm.getValueAsDouble("WeightSeek");
+        _weightFlee = Prm.getValueAsDouble("WeightFlee");
+        _weightArrive = Prm.getValueAsDouble("WeightArrive");
+        _weightPursuit = Prm.getValueAsDouble("WeightPursuit");
+        _weightWander = Prm.getValueAsDouble("WeightWander");
+        _weightObstacleAvoidance = Prm.getValueAsDouble("WeightObstacleAvoidance");
         
         double theta = kTwoPi * randFloat(0.0f, 1.0f);
-    
         _wanderTarget = Vector2(_wanderRadius * cos(theta), _wanderRadius * sin(theta));
         
-        //enableBehavior(BehaviorType::kFlee);
+        enableBehavior(BehaviorType::kFlee);
         //enableBehavior(BehaviorType::kSeek);
-        enableBehavior(BehaviorType::kArrive);
+        //enableBehavior(BehaviorType::kArrive);
+        enableBehavior(BehaviorType::kWander);
     }
+    
     
     
     
@@ -87,6 +99,7 @@ namespace realtrick
     
     
     
+    
     //
     // Seek
     //
@@ -98,14 +111,21 @@ namespace realtrick
     
     
     
+    
     //
     // Flee
     //
     Vector2 SteeringBehaviors::_flee(const Vector2& targetPos)
     {
-        Vector2 desiredVelocity = (_vehicle->getPos() - targetPos).getNormalized() * _vehicle->getMaxSpeed();
-        return (desiredVelocity - _vehicle->getVelocity());
+        if((targetPos - _vehicle->getPos()).getLengthSq() < 200.0f * 200.0f)
+        {
+            Vector2 desiredVelocity = (_vehicle->getPos() - targetPos).getNormalized() * _vehicle->getMaxSpeed();
+            return (desiredVelocity - _vehicle->getVelocity());
+        }
+        
+        return Vector2::kZero;
     }
+    
     
     
     
@@ -132,6 +152,7 @@ namespace realtrick
     
     
     
+    
     //
     // Pursuit
     //
@@ -150,6 +171,7 @@ namespace realtrick
     
     
     
+    
     //
     // Wander
     //
@@ -157,51 +179,78 @@ namespace realtrick
     {
         double jitterThisTimeSlice = _wanderJitter * _vehicle->getTimeElapsed();
         
-        _wanderTarget += Vector2(randFloat(-1.0f, 1.0f) * jitterThisTimeSlice, randFloat(-1.0f, 1.0f) * jitterThisTimeSlice);
-        
+        float r = randFloat(-1.0f, 1.0f);
+        _wanderTarget += Vector2(r * jitterThisTimeSlice, r * jitterThisTimeSlice);
         _wanderTarget.normalize();
-        
         _wanderTarget *= _wanderRadius;
         
-        Vector2 target = _wanderTarget + Vector2(_wanderDistance, 0);
-    
-        // transform local to world.
+        Vector2 targetLocal = _wanderTarget + Vector2(_wanderDistance, 0);
+        Vector2 targetWorld = getWorldTransformedVector(targetLocal, _vehicle->getHeading(), _vehicle->getSide(), _vehicle->getPos());
         
+        return targetWorld - _vehicle->getPos();
+    }
+    
+    
+    //
+    // ObstacleAvoidance
+    //
+    Vector2 SteeringBehaviors::_obstacleAvoidance(const std::vector<BaseEntity*> obstacles)
+    {
         return Vector2::kZero;
     }
     
+    
+    //
+    // CalculateWeightedSum
+    //
     void SteeringBehaviors::_calculateWeightedSum()
     {
         HelloWorldScene* world = (HelloWorldScene*)_vehicle->getGameWorld();
         cocos2d::Sprite* crossHair = world->getCrossHair();
+        Vector2 targetPos = Vector2(crossHair->getPosition().x, crossHair->getPosition().y);
+        targetPos.x -= 20.0f;
+        targetPos.y -= 20.0f;
+        
         
         if(isOnBehavior(BehaviorType::kSeek))
         {
-            _steeringForce += SteeringBehaviors::_seek(Vector2(crossHair->getPosition().x, crossHair->getPosition().y)) * _weightSeek;
+            _steeringForce += SteeringBehaviors::_seek(targetPos) * _weightSeek;
         }
         
         if(isOnBehavior(BehaviorType::kFlee))
         {
-            _steeringForce += SteeringBehaviors::_flee(Vector2(crossHair->getPosition().x, crossHair->getPosition().y)) * _weightFlee;
+            _steeringForce += SteeringBehaviors::_flee(targetPos) * _weightFlee;
         }
         
         if(isOnBehavior(BehaviorType::kArrive))
         {
-            _steeringForce += SteeringBehaviors::_arrive(Vector2(crossHair->getPosition().x, crossHair->getPosition().y), 3.0) * _weightArrive;
+            _steeringForce += SteeringBehaviors::_arrive(targetPos, 3.0) * _weightArrive;
         }
 
         if(isOnBehavior(BehaviorType::kWander))
         {
             _steeringForce += _wander() * _weightWander;
+            int d = 0;
+            d++;
         }
-        
+    
     }
     
+    
+    
+    //
+    // CalculatePrioritized
+    //
     void SteeringBehaviors::_calculatePrioritized()
     {
         
     }
     
+    
+    
+    //
+    // CalculatedDithered
+    //
     void SteeringBehaviors::_calculatedDithered()
     {
         
