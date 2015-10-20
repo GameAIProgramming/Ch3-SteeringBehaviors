@@ -10,6 +10,7 @@
 #pragma once
 
 #include <map>
+#include "Singleton.hpp"
 
 namespace realtrick
 {
@@ -18,20 +19,17 @@ namespace realtrick
 
     #define EntMgr EntityManager::getInstance()
 
-    class EntityManager
+    class EntityManager : public Singleton<EntityManager>
     {
   
+        friend Singleton<EntityManager>;
+        
     private:
     
         std::map<int, BaseEntity*>          _entityMap;
-        
-        EntityManager();
-        EntityManager(const EntityManager& rhs) = delete;
-        EntityManager& operator=(const EntityManager& rhs) = delete;
     
     public:
     
-        static EntityManager& getInstance();
         BaseEntity* getEntityFromID(int id);
         bool registEntity(BaseEntity* newEntity);
         bool removeEntity(BaseEntity* delEntity);

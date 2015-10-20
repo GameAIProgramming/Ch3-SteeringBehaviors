@@ -46,5 +46,12 @@ namespace realtrick
         {
             _heading = _velocity.getNormalized();
         }
+        
+        if(_pos.x > 600.0f) _pos.x = 1.0f;
+        else if(_pos.x < 0.0f) _pos.x = 599.0f;
+        
+        if(_pos.y > 600.0f) _pos.y = 1.0f;
+        else if(_pos.y < 0.0f) _pos.y = 599.0f;
+        
     }
 }

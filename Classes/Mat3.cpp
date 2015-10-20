@@ -115,6 +115,19 @@ namespace realtrick
         ret.y = (v.x * _12) + (v.y * _22) + _32;
         return ret;
     }
+    
+    std::vector<Vector2> Mat3::getTransformedVector(std::vector<Vector2> v)
+    {
+        std::vector<Vector2> ret;
+        for( auto &d : v)
+        {
+            Vector2 temp;
+            temp.x = (d.x * _11) + (d.y * _21) + _31;
+            temp.y = (d.x * _12) + (d.y * _22) + _32;
+            ret.push_back(temp);
+        }
+        return ret;
+    }
 
 }
 

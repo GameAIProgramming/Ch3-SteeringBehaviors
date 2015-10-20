@@ -48,7 +48,6 @@ namespace realtrick
 
         Vector2 getHeading() const                          { return _heading; }
         inline void setHeading(const Vector2& heading);
-        inline bool rotateHeadingToFacePosition(const Vector2& target);
         
         Vector2 getSide() const                             { return _side; }
         
@@ -77,14 +76,6 @@ namespace realtrick
         _heading = heading;
         _heading.normalize();
         _side = _heading.getPerp();
-    }
-    
-    inline bool MovingEntity::rotateHeadingToFacePosition(const Vector2& target)
-    {
-        //Vector2 toTarget = target.getNormalized();
-        
-        //if(Vector2::isLineParallel(_pos, <#const realtrick::Vector2 &B#>, <#const realtrick::Vector2 &C#>, <#const realtrick::Vector2 &D#>))
-        return true;
     }
 
 }

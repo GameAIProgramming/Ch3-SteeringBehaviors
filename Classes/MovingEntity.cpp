@@ -7,6 +7,7 @@
 //
 
 #include "MovingEntity.hpp"
+#include "ParamLoader.hpp"
 
 namespace realtrick
 {
@@ -15,20 +16,20 @@ namespace realtrick
         _velocity(Vector2::kZero),
         _heading(Vector2::kUnitY),
         _side(_heading.getPerp()),
-        _mass(1.0),
-        _maxSpeed(100.0),
-        _maxForce(100.0),
-        _maxTurnRate(30.0)
+        _mass(Prm.getValueAsDouble("Mass")),
+        _maxSpeed(Prm.getValueAsDouble("MaxSpeed")),
+        _maxForce(Prm.getValueAsDouble("MaxForce")),
+        _maxTurnRate(Prm.getValueAsDouble("MaxTurnRate"))
     {}
     
     MovingEntity::MovingEntity(int id, const Vector2& pos, double r) : BaseEntity(id, pos, r),
         _velocity(Vector2::kZero),
         _heading(Vector2::kUnitY),
         _side(_heading.getPerp()),
-        _mass(1.0),
-        _maxSpeed(100.0),
-        _maxForce(100.0),
-        _maxTurnRate(30.0)
+        _mass(Prm.getValueAsDouble("Mass")),
+        _maxSpeed(Prm.getValueAsDouble("MaxSpeed")),
+        _maxForce(Prm.getValueAsDouble("MaxForce")),
+        _maxTurnRate(Prm.getValueAsDouble("MaxTurnRate"))
     {}
 
 }

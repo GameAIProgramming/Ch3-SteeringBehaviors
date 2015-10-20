@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "Vector2.hpp"
 
 namespace realtrick
@@ -39,7 +41,7 @@ namespace realtrick
         void rotate(const Vector2& heading, const Vector2& side);
         void translate(const Vector2& trans);
         Vector2 getTransformedVector(const Vector2& v);
-        
+        std::vector<Vector2> getTransformedVector(std::vector<Vector2> v);
     };
     
     

@@ -1,6 +1,7 @@
 #include "HelloWorldScene.h"
 #include "EntityManager.hpp"
 #include "Vehicle.hpp"
+#include "ParamLoader.hpp"
 
 USING_NS_CC;
 using namespace realtrick;
@@ -18,7 +19,7 @@ Scene* HelloWorldScene::createScene()
 
 bool HelloWorldScene::init()
 {
-    if ( !LayerColor::initWithColor(Color4B::WHITE) )
+    if ( !LayerColor::initWithColor(Color4B::GRAY) )
     {
         return false;
     }
@@ -37,22 +38,21 @@ bool HelloWorldScene::init()
     initUI();
     initEntites();
     
-    
-    
     return true;
 }
 
 void HelloWorldScene::initEntites()
 {
-    for(int i = 0 ; i < 200 ; ++ i)
+    int numOfEntity = Prm.getValueAsInt("NumOfEntity");
+    for(int i = 0 ; i < numOfEntity ; ++ i)
     {
         Vehicle* vehicle = new Vehicle(this, getNextValidID());
-        vehicle->setPos(Vector2(rand() % 1136, rand() % 640));
+        vehicle->setPos(Vector2(rand() % 600, rand() % 600));
         EntMgr.registEntity(vehicle);
     }
     
     _spriteManager = Sprite::create();
-    addChild(_spriteManager);
+    _gameView->addChild(_spriteManager);
     
     auto entities = EntMgr.getEntMap();
     for(auto &d : entities)
@@ -80,8 +80,37 @@ void HelloWorldScene::update(float dt)
 
 void HelloWorldScene::initUI()
 {
+    
+    _gameView = Sprite::create();
+    _gameView->setPosition(Vec2(20.0f, 20.0f));
+    DrawNode* gameViewNode = DrawNode::create();
+    gameViewNode->drawSegment(Vec2::ZERO, Vec2(600.0f, 0.0f), 1.0f, Color4F::RED);
+    gameViewNode->drawSegment(Vec2(600.0f, 0.0f), Vec2(600.0f, 600.0f), 1.0f, Color4F::RED);
+    gameViewNode->drawSegment(Vec2(600.0f, 600.0f), Vec2(0.0f, 600.0f), 1.0f, Color4F::RED);
+    gameViewNode->drawSegment(Vec2(0.0f, 600.0f), Vec2::ZERO, 1.0f, Color4F::RED);
+    //_gameView->addChild(gameViewNode);
+    addChild(_gameView, 0);
+    
+    _optionView = Sprite::create();
+    _optionView->setPosition(Vec2(640.0f, 20.0f));
+    DrawNode* optionViewNode = DrawNode::create();
+    optionViewNode->drawSegment(Vec2::ZERO, Vec2(476.0f, 0.0f), 1.0f, Color4F::RED);
+    optionViewNode->drawSegment(Vec2(476.0f, 0.0f), Vec2(476.0f, 600.0f), 1.0f, Color4F::RED);
+    optionViewNode->drawSegment(Vec2(476.0f, 600.0f), Vec2(0.0f, 600.0f), 1.0f, Color4F::RED);
+    optionViewNode->drawSegment(Vec2(0.0f, 600.0f), Vec2::ZERO, 1.0f, Color4F::RED);
+    //_optionView->addChild(optionViewNode);
+    addChild(_optionView, 0);
+    
     _uiLayer = Sprite::create();
-    this->addChild(_uiLayer);
+    addChild(_uiLayer, 1);
+    
+    DrawNode* bgNode = DrawNode::create();
+    bgNode->drawSolidRect(Vec2::ZERO, Vec2(1136.0f, 20.0f), Color4F::BLACK);
+    bgNode->drawSolidRect(Vec2::ZERO, Vec2(20.0f, 640.0f), Color4F::BLACK);
+    bgNode->drawSolidRect(Vec2(620.0f, 0.0f), Vec2(640.0f, 640.0f), Color4F::BLACK);
+    bgNode->drawSolidRect(Vec2(1116.0f, 0.0f), Vec2(1136.0f, 640.0f), Color4F::BLACK);
+    bgNode->drawSolidRect(Vec2(0.0f, 620.0f), Vec2(1136.0f, 640.0f), Color4F::BLACK);
+    addChild(bgNode,2);
     
     _crossHair = Sprite::create();
     
@@ -102,6 +131,13 @@ void HelloWorldScene::onTouchesBegan(const std::vector<Touch*>& touches, Event *
     for(auto &d : touches)
     {
         Vec2 touchPos = d->getLocation();
+        
+        if(touchPos.x > 620.0f) touchPos.x = 620.0f;
+        else if(touchPos.x < 20.0f) touchPos.x = 20.0f;
+        
+        if(touchPos.y > 620.0f) touchPos.y = 620.0f;
+        else if(touchPos.y < 20.0f) touchPos.y = 20.0f;
+        
         _crossHair->setPosition(touchPos);
     }
 }
@@ -111,6 +147,13 @@ void HelloWorldScene::onTouchesMoved(const std::vector<Touch*>& touches, Event *
     for(auto &d : touches)
     {
         Vec2 touchPos = d->getLocation();
+        
+        if(touchPos.x > 620.0f) touchPos.x = 620.0f;
+        else if(touchPos.x < 20.0f) touchPos.x = 20.0f;
+        
+        if(touchPos.y > 620.0f) touchPos.y = 620.0f;
+        else if(touchPos.y < 20.0f) touchPos.y = 20.0f;
+        
         _crossHair->setPosition(touchPos);
     }
 }
@@ -120,6 +163,13 @@ void HelloWorldScene::onTouchesEnded(const std::vector<Touch*>& touches, Event *
     for(auto &d : touches)
     {
         Vec2 touchPos = d->getLocation();
+        
+        if(touchPos.x > 620.0f) touchPos.x = 620.0f;
+        else if(touchPos.x < 20.0f) touchPos.x = 20.0f;
+        
+        if(touchPos.y > 620.0f) touchPos.y = 620.0f;
+        else if(touchPos.y < 20.0f) touchPos.y = 20.0f;
+        
         _crossHair->setPosition(touchPos);
     }
 }
@@ -129,6 +179,13 @@ void HelloWorldScene::onTouchesCancelled(const std::vector<Touch*>& touches, Eve
     for(auto &d : touches)
     {
         Vec2 touchPos = d->getLocation();
+        
+        if(touchPos.x > 620.0f) touchPos.x = 620.0f;
+        else if(touchPos.x < 20.0f) touchPos.x = 20.0f;
+        
+        if(touchPos.y > 620.0f) touchPos.y = 620.0f;
+        else if(touchPos.y < 20.0f) touchPos.y = 20.0f;
+        
         _crossHair->setPosition(touchPos);
     }
 }
@@ -136,13 +193,13 @@ void HelloWorldScene::onTouchesCancelled(const std::vector<Touch*>& touches, Eve
 
 float HelloWorldScene::calAngle(const Vec2& v)
 {
-    Vec2 axis(0.f, 1.f);
+    Vec2 axis(0.0f, 1.0f);
     Vec2 rotated90 = axis.getRPerp();
     
     float angle = MathRadianToDegree(acos((rotated90.x * v.x + rotated90.y * v.y) / (sqrt(rotated90.x * rotated90.x + rotated90.y * rotated90.y) * sqrt(v.x * v.x + v.y * v.y))));
-    if (angle > 90)
+    if (angle > 90.0f)
     {
-        return 360 - MathRadianToDegree(acos((axis.x * v.x + axis.y * v.y) / (sqrt(axis.x * axis.x + axis.y * axis.y) * sqrt(v.x * v.x + v.y * v.y))));
+        return 360.0f - MathRadianToDegree(acos((axis.x * v.x + axis.y * v.y) / (sqrt(axis.x * axis.x + axis.y * axis.y) * sqrt(v.x * v.x + v.y * v.y))));
     }
     
     return MathRadianToDegree(acos((axis.x * v.x + axis.y * v.y) / (sqrt(axis.x * axis.x + axis.y * axis.y) * sqrt(v.x * v.x + v.y * v.y))));
