@@ -1,8 +1,8 @@
 //
 //  Vector2.cpp
-//  Ai002_SteeringBahavior
+//  Ai002_SteeringBehavior
 //
-//  Created by 남준현 on 2015. 10. 15..
+//  Created by 남준현 on 2015. 10. 20..
 //
 //
 
@@ -246,13 +246,5 @@ namespace realtrick
     const Vector2 Vector2::kOne = Vector2(1.0, 1.0);
     const Vector2 Vector2::kUnitX = Vector2(1.0, 0.0);
     const Vector2 Vector2::kUnitY = Vector2(0.0, 1.0);
-    
-    
-    
+
 }
-
-
-
-
-
-

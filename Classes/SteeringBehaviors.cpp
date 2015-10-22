@@ -8,7 +8,7 @@
 
 #include "SteeringBehaviors.hpp"
 #include "Vehicle.hpp"
-#include "HelloWorldScene.h"
+#include "HelloWorldScene.hpp"
 #include "Geometry.hpp"
 #include "Transformations.hpp"
 #include "ParamLoader.hpp"
@@ -35,6 +35,8 @@ namespace realtrick
         _wanderDistance = Prm.getValueAsDouble("WanderDistance");
         _wanderJitter = Prm.getValueAsDouble("WanderJitter");
         _wanderRadius = Prm.getValueAsDouble("WanderRadius");
+        
+        _detectionBoxLength = Prm.getValueAsDouble("MinDetectionBoxLength");
         
         _weightSeek = Prm.getValueAsDouble("WeightSeek");
         _weightFlee = Prm.getValueAsDouble("WeightFlee");
@@ -191,13 +193,20 @@ namespace realtrick
     }
     
     
+    
+    
     //
     // ObstacleAvoidance
     //
     Vector2 SteeringBehaviors::_obstacleAvoidance(const std::vector<BaseEntity*> obstacles)
     {
+        _detectionBoxLength += (_vehicle->getSpeed()/ _vehicle->getMaxSpeed()) * _detectionBoxLength;
         return Vector2::kZero;
     }
+    
+    
+    
+    
     
     
     //
@@ -238,6 +247,7 @@ namespace realtrick
     
     
     
+    
     //
     // CalculatePrioritized
     //
@@ -245,6 +255,8 @@ namespace realtrick
     {
         
     }
+    
+    
     
     
     

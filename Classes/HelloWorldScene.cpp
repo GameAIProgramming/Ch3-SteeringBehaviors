@@ -1,4 +1,4 @@
-#include "HelloWorldScene.h"
+#include "HelloWorldScene.hpp"
 #include "EntityManager.hpp"
 #include "Vehicle.hpp"
 #include "ParamLoader.hpp"

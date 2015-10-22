@@ -1,8 +1,8 @@
 //
 //  Vector2.hpp
-//  Ai002_SteeringBahavior
+//  Ai002_SteeringBehavior
 //
-//  Created by 남준현 on 2015. 10. 15..
+//  Created by 남준현 on 2015. 10. 20..
 //
 //
 
@@ -15,7 +15,7 @@ namespace realtrick
     
     class Vector2
     {
-     
+        
     public:
         
         double x, y;
@@ -131,13 +131,12 @@ namespace realtrick
         
     };
     
+    
+    
 }
 
+
 #include "Vector2.inl"
-
-
-
-
 
 
 
