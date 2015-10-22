@@ -71,6 +71,8 @@ namespace realtrick
         double                  _wanderRadius;
         double                  _wanderDistance;
         
+        double                  _detectionBoxLength;
+        
         
         double                  _weightSeek;
         double                  _weightFlee;

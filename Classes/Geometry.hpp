@@ -8,7 +8,10 @@
 
 #pragma once
 
+#include <vector>
+
 #include "Vector2.hpp"
+#include "Mat3.hpp"
 
 namespace realtrick
 {
@@ -17,9 +20,9 @@ namespace realtrick
     
     public:
     
-        Vector2 origin;
-        double  width;
-        double  height;
+        Vector2         origin;
+        double          width;
+        double          height;
     
         Rect();
         Rect(double x, double y, double width, double height);
@@ -41,8 +44,97 @@ namespace realtrick
         void merge(const Rect& rect);
         static const Rect kZero;
     
+        virtual ~Rect() {}
+        
     };
+
+    class Circle
+    {
+      
+    public:
+        
+        Vector2         origin;
+        double          radius;
+        
+        Circle();
+        Circle(double x, double y, double r);
+        Circle(const Vector2& origin, double r);
+        Circle(const Circle& copy);
+        Circle& operator=(const Circle& rhs);
+        void setCircle(double x, double y, double r);
+        Circle getTranslatedCircle(const Vector2& dir, double distance);
+        bool containPoint(const Vector2& point) const;
+        
+        virtual ~Circle() {}
+        
+    };
+    
+    
+    
+    class Segment
+    {
+        
+    public:
+        
+        Vector2         start;
+        Vector2         end;
+        
+        Segment();
+        Segment(double sx, double sy, double ex, double ey);
+        Segment(const Segment& copy);
+        Segment& operator=(const Segment& rhs);
+        void setSegment(double sx, double sy, double ex, double dy);
+        Vector2 getDirection() const;
+        double getDistance() const;
+        double getDistanceSq() const;
+        bool containPoint(const Vector2& point) const;
+        
+        virtual ~Segment() {}
+    };
+    
+    
+    class Ray
+    {
+        
+    public:
+        
+        Vector2         start;
+        Vector2         dir;
+        
+        Ray();
+        Ray(double sx, double sy, double dirX, double dirY);
+        Ray(const Ray& copy);
+        Ray& operator=(const Ray& rhs);
+        void setRay(double sx, double sy, double dirX, double dirY);
+        bool containPoint(const Vector2& point) const;
+        
+        virtual ~Ray() {}
+        
+    };
+    
+    class Polygon
+    {
+        
+    public:
+        
+        std::vector<Segment> segs;
+        
+        Polygon();
+        Polygon(const std::vector<Segment> segs);
+        Polygon(const Polygon& copy);
+        Polygon& operator=(const Polygon& rhs);
+        void setPolygon(const std::vector<Segment> segs);
+        bool containPoint(const Vector2& point) const;
+        
+        virtual ~Polygon() { segs.clear(); }
+        
+    };
+    
 
     float randFloat(float min, float max);
     
 }
+
+
+
+

@@ -45,7 +45,8 @@ namespace realtrick
     
         Vector2 getVelocity() const                         { return _velocity; }
         void setVelocity(const Vector2& velocity)           { _velocity = velocity; }
-
+        double getSpeed() const                             { return _velocity.getLength(); }
+        
         Vector2 getHeading() const                          { return _heading; }
         inline void setHeading(const Vector2& heading);
         
