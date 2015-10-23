@@ -210,52 +210,6 @@ namespace realtrick
     
     
     
-    
-    //
-    // Ray
-    //
-    Ray::Ray()
-    {
-        setRay(0.0, 0.0, 0.0, 0.0);
-    }
-    
-    Ray::Ray(double sx, double sy, double dirX, double dirY)
-    {
-        setRay(sx, sy, dirX, dirY);
-    }
-    
-    Ray::Ray(const Ray& copy)
-    {
-        setRay(copy.start.x, copy.start.x, copy.dir.x, copy.dir.y);
-    }
-    
-    Ray& Ray::operator=(const Ray& rhs)
-    {
-        if(this == &rhs)
-            return *this;
-        setRay(rhs.start.x, rhs.start.y, rhs.dir.x, rhs.dir.y);
-        return *this;
-    }
-    
-    void Ray::setRay(double sx, double sy, double dirX, double dirY)
-    {
-        this->start.x = sx;
-        this->start.y = sy;
-        this->dir.x = dirX;
-        this->dir.y = dirY;
-    }
-    
-    // TODO 구현
-    bool Ray::containPoint(const Vector2& point) const
-    {
-        return false;
-    }
-    
-    
-    
-    
-    
-    
     //
     // Polygon
     //

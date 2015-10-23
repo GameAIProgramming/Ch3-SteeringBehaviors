@@ -51,13 +51,8 @@ namespace realtrick
                intersect(Segment(maxX, maxY, minX, maxY), segment) ||
                intersect(Segment(minX, maxY, minX, minY), segment))
                 return true;
+            
             return false;
-        }
-        
-        inline bool intersect(const Rect& rect, const Ray& ray)
-        {
-            bool ret;
-            return ret;
         }
         
         inline bool intersect(const Rect& rect, const Polygon& polygon)
@@ -139,12 +134,6 @@ namespace realtrick
             return false;
         }
         
-        inline bool intersect(const Circle& circle, const Ray& ray)
-        {
-            bool ret;
-            return ret;
-        }
-        
         inline bool intersect(const Circle& circle, const Polygon& polygon)
         {
             for(std::vector<Vector2>::size_type j = 0; j < polygon.vertices.size() - 1 ; ++ j)
@@ -191,25 +180,6 @@ namespace realtrick
             return true;
         }
         
-        inline bool intersect(const Segment& segment, const Ray& ray)
-        {
-            const Vector2 v1 = ray.start - segment.start;
-            const Vector2 v2 = segment.end - segment.start;
-            Vector2 v3;
-            if((segment.getDirection()).cross(ray.dir) > 0)
-                v3 = ray.dir.getRPerp();
-            else
-                v3 = ray.dir.getPerp();
-            
-            const double t1 = fabs(v2.cross(v1)) / v2.dot(v3);
-            const double t2 = v1.dot(v3) / v2.dot(v3);
-            
-            if( t1 < 0) return false;
-            if( t2 > 0 && t2 < 1) return true;
-            
-            return false;
-        }
-        
         inline bool intersect(const Segment& segment, const Polygon& polygon)
         {
             for(std::vector<Vector2>::size_type j = 0; j < polygon.vertices.size() - 1 ; ++ j)
@@ -223,40 +193,6 @@ namespace realtrick
             return false;
 
         }
-        
-        
-        //
-        // Ray
-        //
-        inline bool intersect(const Ray& ray, const Rect& rect)
-        {
-            bool ret;
-            return ret;
-        }
-        
-        inline bool intersect(const Ray& ray, const Circle& circle)
-        {
-            bool ret;
-            return ret;
-        }
-        
-        inline bool intersect(const Ray& ray, const Segment& segment)
-        {
-            return intersect(segment, ray);
-        }
-        
-        inline bool intersect(const Ray& ray1, const Ray& ray2)
-        {
-            bool ret;
-            return ret;
-        }
-        
-        inline bool intersect(const Ray& ray, const Polygon& polygon)
-        {
-            bool ret;
-            return ret;
-        }
-        
         
         //
         // Polygon
@@ -274,12 +210,6 @@ namespace realtrick
         inline bool intersect(const Polygon& polygon, const Segment& segment)
         {
             return intersect(segment, polygon);
-        }
-        
-        inline bool intersect(const Polygon& polygon, const Ray& ray)
-        {
-            bool ret;
-            return ret;
         }
         
         inline bool intersect(const Polygon& polygon1, const Polygon& polygon2)

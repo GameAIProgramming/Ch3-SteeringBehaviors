@@ -88,27 +88,7 @@ namespace realtrick
         
         virtual ~Segment() {}
     };
-    
-    
-    class Ray
-    {
-        
-    public:
-        
-        Vector2         start;
-        Vector2         dir;
-        
-        Ray();
-        Ray(double sx, double sy, double dirX, double dirY);
-        Ray(const Ray& copy);
-        Ray& operator=(const Ray& rhs);
-        void setRay(double sx, double sy, double dirX, double dirY);
-        bool containPoint(const Vector2& point) const;
-        
-        virtual ~Ray() {}
-        
-    };
-    
+
     class Polygon
     {
         
