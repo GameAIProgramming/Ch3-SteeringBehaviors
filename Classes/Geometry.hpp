@@ -38,10 +38,6 @@ namespace realtrick
         double getMaxY() const;
         bool equals(const Rect& rect) const;
         bool containPoint(const Vector2& point) const;
-        bool intersectsRect(const Rect& rect) const;
-        bool intersectsCircle(const Vector2& center, double radius) const;
-        Rect getMergedRect(const Rect& rect) const;
-        void merge(const Rect& rect);
         static const Rect kZero;
     
         virtual ~Rect() {}
@@ -81,6 +77,7 @@ namespace realtrick
         
         Segment();
         Segment(double sx, double sy, double ex, double ey);
+        Segment(const Vector2& start, const Vector2& end);
         Segment(const Segment& copy);
         Segment& operator=(const Segment& rhs);
         void setSegment(double sx, double sy, double ex, double dy);
@@ -117,24 +114,29 @@ namespace realtrick
         
     public:
         
-        std::vector<Segment> segs;
+        std::vector<Vector2> vertices;
         
         Polygon();
-        Polygon(const std::vector<Segment> segs);
+        Polygon(const std::vector<Vector2>& segs);
         Polygon(const Polygon& copy);
         Polygon& operator=(const Polygon& rhs);
-        void setPolygon(const std::vector<Segment> segs);
+        void setPolygon(const std::vector<Vector2>& segs);
+        void pushVertex(const Vector2 point);
         bool containPoint(const Vector2& point) const;
         
-        virtual ~Polygon() { segs.clear(); }
+        virtual ~Polygon() { vertices.clear(); }
         
     };
     
 
-    float randFloat(float min, float max);
+    inline float randFloat(float min, float max)
+    {
+        std::mt19937 re((unsigned int)time(nullptr));
+        std::uniform_real_distribution<float> urd(min, max);
+        return urd(re);
+    }
     
 }
-
 
 
 

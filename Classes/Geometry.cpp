@@ -92,73 +92,7 @@ namespace realtrick
         return (point.x >= getMinX() && point.x <= getMaxX() && point.y >= getMinY() && point.y <= getMaxY());
     }
     
-    bool Rect::intersectsRect(const Rect& rect) const
-    {
-        return !(getMaxX() < rect.getMinX() || rect.getMaxX() < getMinX() || getMaxY() < rect.getMinY() || rect.getMaxY() < getMinY());
-    }
-    
-    bool Rect::intersectsCircle(const Vector2& center, double radius) const
-    {
-        Vector2 rectangleCenter((origin.x + width / 2),
-                                (origin.y + height / 2));
-        
-        float w = width / 2;
-        float h = height / 2;
-        
-        float dx = fabs(center.x - rectangleCenter.x);
-        float dy = fabs(center.y - rectangleCenter.y);
-        
-        if (dx > (radius + w) || dy > (radius + h))
-        {
-            return false;
-        }
-        
-        Vector2 circleDistance(fabs(center.x - origin.x - w),
-                               fabs(center.y - origin.y - h));
-        
-        if (circleDistance.x <= (w))
-        {
-            return true;
-        }
-        
-        if (circleDistance.y <= (h))
-        {
-            return true;
-        }
-        
-        float cornerDistanceSq = powf(circleDistance.x - w, 2) + powf(circleDistance.y - h, 2);
-        
-        return (cornerDistanceSq <= (powf(radius, 2)));
-    }
-    
-    Rect Rect::getMergedRect(const Rect& rect) const
-    {
-        double minX = std::min(getMinX(), rect.getMinX());
-        double minY = std::min(getMinY(), rect.getMinY());
-        double maxX = std::max(getMaxX(), rect.getMaxX());
-        double maxY = std::max(getMaxY(), rect.getMaxY());
-        
-        return Rect(Vector2(minX, minY), maxX - minX, maxY - minY);
-    }
-    
-    void Rect::merge(const Rect& rect)
-    {
-        double minX = std::min(getMinX(), rect.getMinX());
-        double minY = std::min(getMinY(), rect.getMinY());
-        double maxX = std::max(getMaxX(), rect.getMaxX());
-        double maxY = std::max(getMaxY(), rect.getMaxY());
-        
-        setRect(minX, minY, maxX - minX, maxY - minY);
-    }
-    
     const Rect Rect::kZero = Rect(0.0, 0.0, 0.0, 0.0);
-    
-    float randFloat(float min, float max)
-    {
-        std::mt19937 re((unsigned int)time(nullptr));
-        std::uniform_real_distribution<float> urd(min, max);
-        return urd(re);
-    }
     
     
     
@@ -225,6 +159,11 @@ namespace realtrick
     Segment::Segment(double sx, double sy, double ex, double ey)
     {
         setSegment(sx, sy, ex, ey);
+    }
+    
+    Segment::Segment(const Vector2& start, const Vector2& end)
+    {
+        setSegment(start.x, start.y, end.x, end.y);
     }
     
     Segment::Segment(const Segment& copy)
@@ -323,28 +262,38 @@ namespace realtrick
     Polygon::Polygon()
     {}
     
-    Polygon::Polygon(const std::vector<Segment> segs)
+    Polygon::Polygon(const std::vector<Vector2>& segs)
     {
         setPolygon(segs);
     }
     
     Polygon::Polygon(const Polygon& copy)
     {
-        setPolygon(copy.segs);
+        setPolygon(copy.vertices);
     }
     
     Polygon& Polygon::operator=(const Polygon& rhs)
     {
         if(this == &rhs)
             return *this;
-        setPolygon(rhs.segs);
+        setPolygon(rhs.vertices);
         return *this;
         
     }
     
-    void Polygon::setPolygon(const std::vector<Segment> segs)
+    void Polygon::setPolygon(const std::vector<Vector2>& segs)
     {
-        this->segs = segs;
+        this->vertices.clear();
+        
+        for(std::vector<Vector2>::size_type i = 0 ; i < segs.size() ; ++ i)
+        {
+            this->vertices.push_back(segs.at(i));
+        }
+    }
+    
+    void Polygon::pushVertex(const Vector2 point)
+    {
+        this->vertices.push_back(point);
     }
     
     // TODO 구현

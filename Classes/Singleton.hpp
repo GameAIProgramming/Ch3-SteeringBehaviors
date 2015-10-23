@@ -11,22 +11,23 @@
 namespace realtrick
 {
     
-    template <class Type>
+    template <typename Derived>
     class Singleton
     {
+        
     protected:
         
         Singleton() = default;
-        Singleton(const Singleton&) = delete;
-        Singleton(Singleton&&) = delete;
-        Singleton& operator=(const Singleton&) = delete;
-        Singleton& operator=(Singleton&&) = delete;
+        ~Singleton() = default;
         
     public:
         
-        static Type& getInstance()
+        Singleton(const Singleton&) = delete;
+        Singleton& operator=(const Singleton&) = delete;
+        
+        static Derived& getInstance()
         {
-            static Type instance;
+            static Derived instance;
             return instance;
         }
         
