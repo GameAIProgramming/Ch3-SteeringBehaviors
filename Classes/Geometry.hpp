@@ -108,24 +108,24 @@ namespace realtrick
         
     };
     
-    
-    inline float randFloat(float min, float max)
-    {
-        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-        std::mt19937 engine((unsigned int)seed);
-        std::uniform_real_distribution<float> distribution(min, max);
-        auto generator = bind(distribution, engine);
-        return generator();
-    }
-    
-    inline int randInt(int min, int max)
-    {
-        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-        std::mt19937 engine((unsigned int)seed);
-        std::uniform_int_distribution<int> distribution(min, max);
-        auto generator = bind(distribution, engine);
-        return generator();
-    }
+//    
+//    inline float randFloat(float min, float max)
+//    {
+//        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+//        std::mt19937 engine((unsigned int)seed);
+//        std::uniform_real_distribution<float> distribution(min, max);
+//        auto generator = bind(distribution, engine);
+//        return generator();
+//    }
+//    
+//    inline int randInt(int min, int max)
+//    {
+//        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+//        std::mt19937 engine((unsigned int)seed);
+//        std::uniform_int_distribution<int> distribution(min, max);
+//        auto generator = bind(distribution, engine);
+//        return generator();
+//    }
     
 }
 

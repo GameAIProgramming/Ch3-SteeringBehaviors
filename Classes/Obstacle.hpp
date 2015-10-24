@@ -15,13 +15,13 @@ namespace realtrick
 
     class Obstacle : public BaseEntity
     {
+    private:
+        
+        Obstacle() { _type = EntityType::kObstacle; }
         
     public:
         
-        Obstacle()
-        {
-            _type = EntityType::kObstacle;
-        }
+        static Obstacle* create();
         
         virtual ~Obstacle() {}
         virtual bool handleMessage(const Telegram& msg) override { return false; }

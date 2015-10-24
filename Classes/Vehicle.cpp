@@ -10,10 +10,24 @@
 
 namespace realtrick
 {
-    
-    Vehicle::Vehicle(cocos2d::Node* world)
+    Vehicle* Vehicle::create(const std::string& fileName)
     {
-        _gameWorld = world;
+        Vehicle *pRet = new(std::nothrow) Vehicle();
+        if (pRet && pRet->initWithFile(fileName))
+        {
+            pRet->autorelease();
+            return pRet;
+        }
+        else
+        {
+            delete pRet;
+            pRet = nullptr;
+            return nullptr;
+        }
+    }
+    
+    Vehicle::Vehicle() : MovingEntity()
+    {
         _type = EntityType::kVehicle;
         _steering = new SteeringBehaviors(this);
     }
@@ -33,6 +47,11 @@ namespace realtrick
         
         _velocity += acceleration * dt;
         //_velocity.truncate(_maxSpeed);
+        if(_velocity.getLengthSq() > _maxSpeed * _maxSpeed)
+        {
+            _velocity.normalize();
+            _velocity *= _maxSpeed;
+        }
         setPosition(getPosition() + _velocity * dt);
         
         if(_velocity.getLengthSq() > kMathEpsilonSq)
