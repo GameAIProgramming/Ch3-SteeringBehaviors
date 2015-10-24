@@ -45,7 +45,7 @@ namespace realtrick
         _weightWander = Prm.getValueAsDouble("WeightWander");
         _weightObstacleAvoidance = Prm.getValueAsDouble("WeightObstacleAvoidance");
         
-        double theta = kTwoPi * randFloat(0.0f, 1.0f);
+        double theta = kTwoPi * cocos2d::random(0.0f, 1.0f);
         _wanderTarget = cocos2d::Vec2(_wanderRadius * cos(theta), _wanderRadius * sin(theta));
         
         enableBehavior(BehaviorType::kFlee);
@@ -181,7 +181,7 @@ namespace realtrick
     {
         double jitterThisTimeSlice = _wanderJitter * _vehicle->getTimeElapsed();
         
-        float r = randFloat(-1.0f, 1.0f);
+        float r = cocos2d::random(-1.0f, 1.0f);
         _wanderTarget += cocos2d::Vec2(r * jitterThisTimeSlice, r * jitterThisTimeSlice);
         _wanderTarget.normalize();
         _wanderTarget *= _wanderRadius;

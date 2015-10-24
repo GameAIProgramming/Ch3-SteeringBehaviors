@@ -2,6 +2,9 @@
 
 #include "cocos2d.h"
 
+#include "Vehicle.hpp"
+#include "Obstacle.hpp"
+
 class HelloWorldScene : public cocos2d::LayerColor
 {
     
@@ -15,6 +18,9 @@ private:
     
     cocos2d::Sprite*                        _gameView;
     cocos2d::Sprite*                        _optionView;
+    
+    cocos2d::Vector<realtrick::Vehicle*>    _vehicles;
+    cocos2d::Vector<realtrick::Obstacle*>   _obstacles;
     
 public:
     

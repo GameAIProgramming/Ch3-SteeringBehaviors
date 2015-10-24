@@ -24,11 +24,6 @@ namespace realtrick
     
     class BaseEntity : public cocos2d::Sprite
     {
-     
-    private:
-    
-        BaseEntity(const BaseEntity&) = delete;
-        BaseEntity& operator=(const BaseEntity&) = delete;
         
     protected:
     

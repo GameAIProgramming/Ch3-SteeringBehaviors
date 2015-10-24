@@ -18,11 +18,6 @@ namespace realtrick
     class MovingEntity : public BaseEntity
     {
     
-    private:
-        
-        MovingEntity(const MovingEntity&) = delete;
-        MovingEntity& operator=(const MovingEntity&) = delete;
-        
     protected:
     
         cocos2d::Vec2               _velocity;

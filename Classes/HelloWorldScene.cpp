@@ -49,10 +49,13 @@ void HelloWorldScene::initEntites()
     int numOfVehicles = Prm.getValueAsInt("NumOfVehicles");
     for(int i = 0 ; i < numOfVehicles ; ++ i)
     {
-        Vehicle* vehicle = new Vehicle(this);
+        Vehicle* vehicle = Vehicle::create("Vehicle.png");
+        vehicle->setGameWorld(this);
         vehicle->setPosition(Vec2(rand() % 600, rand() % 600));
+        vehicle->setTag(getNextValidID());
+        _gameView->addChild(vehicle);
+        _vehicles.pushBack(vehicle);
     }
-    
     
     // Create Obstacles;
     std::vector<Obstacle*> obstacles;
@@ -62,20 +65,27 @@ void HelloWorldScene::initEntites()
         int numOfAllowableTrys = 2000;
         while(numOfAllowableTrys--)
         {
-            double radius = randFloat(Prm.getValueAsDouble("MinObstacleRadius"), Prm.getValueAsDouble("MaxObstacleRadius"));
+            double radius = random(Prm.getValueAsDouble("MinObstacleRadius"), Prm.getValueAsDouble("MaxObstacleRadius"));
             const int border = 10;
             
-            float x = randFloat(radius + border, 600.0f - radius - border);
-            float y = randFloat(radius + border, 600.0f - radius - border);
+            float x = random(radius + border, 600.0f - radius - border);
+            float y = random(radius + border, 600.0f - radius - border);
             
-            Obstacle* ob = new Obstacle();
+            Obstacle* ob = Obstacle::create();
             ob->setPosition(Vec2(x,y));
+            ob->setBRadius(radius);
+            DrawNode* node = DrawNode::create();
+            node->drawCircle(Vec2(ob->getBRadius() / 2 ,ob->getBRadius() / 2), ob->getBRadius(), 360.0f, 100, false, 1.0f, 1.0f, Color4F::BLUE);
+            ob->addChild(node);
 
             const int minGapBetweenObstacles = 20;
             if(!overlapped(ob, obstacles, minGapBetweenObstacles))
             {
                 obstacles.push_back(ob);
                 ob->setTag(getNextValidID());
+                _obstacles.pushBack(ob);
+                _gameView->addChild(ob);
+                
                 break;
             }
             else
@@ -88,7 +98,11 @@ void HelloWorldScene::initEntites()
 
 void HelloWorldScene::update(float dt)
 {
-
+    for(auto &d : _vehicles)
+    {
+        d->update(dt);
+        d->setRotation(calAngle(d->getHeading()));
+    }
 }
 
 void HelloWorldScene::initUI()

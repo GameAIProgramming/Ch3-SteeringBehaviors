@@ -25,13 +25,13 @@ namespace realtrick
         
         float                       _timeElapsed;
         
-        Vehicle() = delete;
-        Vehicle(const Vehicle&) = delete;
-        Vehicle& operator=(const Vehicle&) = delete;
+    private:
+        
+        Vehicle();
         
     public:
         
-        Vehicle(cocos2d::Node* world);
+        static Vehicle* create(const std::string& fileName);
         
         virtual ~Vehicle()
         {
@@ -42,6 +42,8 @@ namespace realtrick
         virtual void update(float dt) override;
 
         cocos2d::Node* getGameWorld() const             { return _gameWorld; }
+        void setGameWorld(cocos2d::Node* world)         { _gameWorld = world; }
+        
         SteeringBehaviors* getSteering() const          { return _steering; }
         float getTimeElapsed() const                    { return _timeElapsed; }
         
