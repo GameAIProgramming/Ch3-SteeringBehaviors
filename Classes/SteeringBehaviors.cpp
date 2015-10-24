@@ -22,12 +22,12 @@ namespace realtrick
     SteeringBehaviors::SteeringBehaviors(Vehicle* owner)
     {
         _vehicle = owner;
-        _steeringForce = Vector2::kZero;
+        _steeringForce = cocos2d::Vec2::ZERO;
         
         _targetEntity1 = nullptr;
         _targetEntity2 = nullptr;
         
-        _target = Vector2::kZero;
+        _target = cocos2d::Vec2::ZERO;
         _summingMethod = SummingMethod::kWeightedAverage;
         
         _flag = 0;
@@ -46,7 +46,7 @@ namespace realtrick
         _weightObstacleAvoidance = Prm.getValueAsDouble("WeightObstacleAvoidance");
         
         double theta = kTwoPi * randFloat(0.0f, 1.0f);
-        _wanderTarget = Vector2(_wanderRadius * cos(theta), _wanderRadius * sin(theta));
+        _wanderTarget = cocos2d::Vec2(_wanderRadius * cos(theta), _wanderRadius * sin(theta));
         
         enableBehavior(BehaviorType::kFlee);
         //enableBehavior(BehaviorType::kSeek);
@@ -60,7 +60,7 @@ namespace realtrick
     //
     // Calculate
     //
-    Vector2 SteeringBehaviors::calculate()
+    cocos2d::Vec2 SteeringBehaviors::calculate()
     {
         _steeringForce.setZero();
         
@@ -90,7 +90,7 @@ namespace realtrick
             default:
             {
                 
-                _steeringForce = Vector2::kZero;
+                _steeringForce = cocos2d::Vec2::ZERO;
                 
                 break;
             }
@@ -105,9 +105,9 @@ namespace realtrick
     //
     // Seek
     //
-    Vector2 SteeringBehaviors::_seek(const Vector2& targetPos)
+    cocos2d::Vec2 SteeringBehaviors::_seek(const cocos2d::Vec2& targetPos)
     {
-        Vector2 desiredVelocity = (targetPos - _vehicle->getPos()).getNormalized() * _vehicle->getMaxSpeed();
+        cocos2d::Vec2 desiredVelocity = (targetPos - _vehicle->getPosition()).getNormalized() * _vehicle->getMaxSpeed();
         return (desiredVelocity - _vehicle->getVelocity());
     }
     
@@ -117,15 +117,15 @@ namespace realtrick
     //
     // Flee
     //
-    Vector2 SteeringBehaviors::_flee(const Vector2& targetPos)
+    cocos2d::Vec2 SteeringBehaviors::_flee(const cocos2d::Vec2& targetPos)
     {
-        if((targetPos - _vehicle->getPos()).getLengthSq() < 200.0f * 200.0f)
+        if((targetPos - _vehicle->getPosition()).getLengthSq() < 200.0f * 200.0f)
         {
-            Vector2 desiredVelocity = (_vehicle->getPos() - targetPos).getNormalized() * _vehicle->getMaxSpeed();
+            cocos2d::Vec2 desiredVelocity = (_vehicle->getPosition() - targetPos).getNormalized() * _vehicle->getMaxSpeed();
             return (desiredVelocity - _vehicle->getVelocity());
         }
         
-        return Vector2::kZero;
+        return cocos2d::Vec2::ZERO;
     }
     
     
@@ -134,9 +134,9 @@ namespace realtrick
     //
     // Arrive
     //
-    Vector2 SteeringBehaviors::_arrive(const Vector2& targetPos, double deceleration)
+    cocos2d::Vec2 SteeringBehaviors::_arrive(const cocos2d::Vec2& targetPos, double deceleration)
     {
-        Vector2 toTarget = targetPos - _vehicle->getPos();
+        cocos2d::Vec2 toTarget = targetPos - _vehicle->getPosition();
         double dist = toTarget.getLength();
         if(dist > 0.0)
         {
@@ -144,12 +144,12 @@ namespace realtrick
             double speed = dist / ((double)deceleration * decelerationTweaker);
             
             speed = std::min(speed, _vehicle->getMaxSpeed());
-            Vector2 desiredVelocity = toTarget * speed / dist;
+            cocos2d::Vec2 desiredVelocity = toTarget * speed / dist;
             
             return (desiredVelocity - _vehicle->getVelocity());
         }
         
-        return Vector2::kZero;
+        return cocos2d::Vec2::ZERO;
     }
     
     
@@ -158,17 +158,17 @@ namespace realtrick
     //
     // Pursuit
     //
-    Vector2 SteeringBehaviors::_pursuit(const Vehicle* evader)
+    cocos2d::Vec2 SteeringBehaviors::_pursuit(const Vehicle* evader)
     {
-        Vector2 toEvader = evader->getPos() - _vehicle->getPos();
+        cocos2d::Vec2 toEvader = evader->getPosition() - _vehicle->getPosition();
         double relativeHeading = _vehicle->getHeading().dot(evader->getHeading());
         if((toEvader.dot(_vehicle->getHeading()) > 0.0) && relativeHeading < -0.95)
         {
-            return _seek(evader->getPos());
+            return _seek(evader->getPosition());
         }
         
         double lookAheadTime = toEvader.getLength() / (_vehicle->getMaxSpeed() + evader->getVelocity().getLength());
-        return _seek(evader->getPos() + evader->getVelocity() * lookAheadTime);
+        return _seek(evader->getPosition() + evader->getVelocity() * lookAheadTime);
     }
     
     
@@ -177,19 +177,19 @@ namespace realtrick
     //
     // Wander
     //
-    Vector2 SteeringBehaviors::_wander()
+    cocos2d::Vec2 SteeringBehaviors::_wander()
     {
         double jitterThisTimeSlice = _wanderJitter * _vehicle->getTimeElapsed();
         
         float r = randFloat(-1.0f, 1.0f);
-        _wanderTarget += Vector2(r * jitterThisTimeSlice, r * jitterThisTimeSlice);
+        _wanderTarget += cocos2d::Vec2(r * jitterThisTimeSlice, r * jitterThisTimeSlice);
         _wanderTarget.normalize();
         _wanderTarget *= _wanderRadius;
         
-        Vector2 targetLocal = _wanderTarget + Vector2(_wanderDistance, 0);
-        Vector2 targetWorld = getWorldTransformedVector(targetLocal, _vehicle->getHeading(), _vehicle->getSide(), _vehicle->getPos());
+        cocos2d::Vec2 targetLocal = _wanderTarget + cocos2d::Vec2(_wanderDistance, 0);
+        cocos2d::Vec2 targetWorld = getWorldTransformedVector(targetLocal, _vehicle->getHeading(), _vehicle->getSide(), _vehicle->getPosition());
         
-        return targetWorld - _vehicle->getPos();
+        return targetWorld - _vehicle->getPosition();
     }
     
     
@@ -198,10 +198,10 @@ namespace realtrick
     //
     // ObstacleAvoidance
     //
-    Vector2 SteeringBehaviors::_obstacleAvoidance(const std::vector<BaseEntity*> obstacles)
+    cocos2d::Vec2 SteeringBehaviors::_obstacleAvoidance(const std::vector<BaseEntity*> obstacles)
     {
         _detectionBoxLength += (_vehicle->getSpeed()/ _vehicle->getMaxSpeed()) * _detectionBoxLength;
-        return Vector2::kZero;
+        return cocos2d::Vec2::ZERO;
     }
     
     
@@ -216,7 +216,7 @@ namespace realtrick
     {
         HelloWorldScene* world = (HelloWorldScene*)_vehicle->getGameWorld();
         cocos2d::Sprite* crossHair = world->getCrossHair();
-        Vector2 targetPos = Vector2(crossHair->getPosition().x, crossHair->getPosition().y);
+        cocos2d::Vec2 targetPos = cocos2d::Vec2(crossHair->getPosition().x, crossHair->getPosition().y);
         targetPos.x -= 20.0f;
         targetPos.y -= 20.0f;
         

@@ -1,7 +1,9 @@
 #include "HelloWorldScene.hpp"
-#include "EntityManager.hpp"
 #include "Vehicle.hpp"
+#include "Obstacle.hpp"
 #include "ParamLoader.hpp"
+#include "Geometry.hpp"
+#include "EntityTemplateFunctions.hpp"
 
 USING_NS_CC;
 using namespace realtrick;
@@ -43,39 +45,50 @@ bool HelloWorldScene::init()
 
 void HelloWorldScene::initEntites()
 {
-    int numOfEntity = Prm.getValueAsInt("NumOfEntity");
-    for(int i = 0 ; i < numOfEntity ; ++ i)
+    // Create Vehicles
+    int numOfVehicles = Prm.getValueAsInt("NumOfVehicles");
+    for(int i = 0 ; i < numOfVehicles ; ++ i)
     {
-        Vehicle* vehicle = new Vehicle(this, getNextValidID());
-        vehicle->setPos(Vector2(rand() % 600, rand() % 600));
-        EntMgr.registEntity(vehicle);
+        Vehicle* vehicle = new Vehicle(this);
+        vehicle->setPosition(Vec2(rand() % 600, rand() % 600));
     }
     
-    _spriteManager = Sprite::create();
-    _gameView->addChild(_spriteManager);
     
-    auto entities = EntMgr.getEntMap();
-    for(auto &d : entities)
+    // Create Obstacles;
+    std::vector<Obstacle*> obstacles;
+    int numOfObstacles = Prm.getValueAsInt("NumOfObstacles");
+    for(int i = 0 ; i < numOfObstacles ; ++ i)
     {
-        Sprite* entity = Sprite::create("Vehicle.png");
-        entity->setTag(d.second->getID());
-        entity->setPosition(Vec2(d.second->getPos().x, d.second->getPos().y));
-        _spriteManager->addChild(entity);
+        int numOfAllowableTrys = 2000;
+        while(numOfAllowableTrys--)
+        {
+            double radius = randFloat(Prm.getValueAsDouble("MinObstacleRadius"), Prm.getValueAsDouble("MaxObstacleRadius"));
+            const int border = 10;
+            
+            float x = randFloat(radius + border, 600.0f - radius - border);
+            float y = randFloat(radius + border, 600.0f - radius - border);
+            
+            Obstacle* ob = new Obstacle();
+            ob->setPosition(Vec2(x,y));
+
+            const int minGapBetweenObstacles = 20;
+            if(!overlapped(ob, obstacles, minGapBetweenObstacles))
+            {
+                obstacles.push_back(ob);
+                ob->setTag(getNextValidID());
+                break;
+            }
+            else
+            {
+                delete ob;
+            }
+        }
     }
 }
 
 void HelloWorldScene::update(float dt)
 {
-    EntMgr.updateEntities(dt);
 
-    auto entities = EntMgr.getEntMap();
-    for(auto &d : entities)
-    {
-        Vehicle* vehicle = (Vehicle*)d.second;
-        Sprite* entity = (Sprite*)_spriteManager->getChildByTag(vehicle->getID());
-        entity->setPosition(Vec2(vehicle->getPos().x, vehicle->getPos().y));
-        entity->setRotation(calAngle(Vec2(vehicle->getHeading().x, vehicle->getHeading().y)));
-    }
 }
 
 void HelloWorldScene::initUI()

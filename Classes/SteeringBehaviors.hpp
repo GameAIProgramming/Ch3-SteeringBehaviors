@@ -8,9 +8,7 @@
 
 #pragma once
 
-#include "Vector2.hpp"
-#include "Mat3.hpp"
-
+#include "Physics.hpp"
 
 namespace realtrick
 {
@@ -53,55 +51,53 @@ namespace realtrick
         
     private:
         
-        Vehicle*                _vehicle;
-        Vector2                 _steeringForce;
+        Vehicle*                        _vehicle;
+        cocos2d::Vec2                   _steeringForce;
         
-        Vehicle*                _targetEntity1;
-        Vehicle*                _targetEntity2;
+        Vehicle*                        _targetEntity1;
+        Vehicle*                        _targetEntity2;
         
-        Vector2                 _target;
+        cocos2d::Vec2                   _target;
         
-        SummingMethod           _summingMethod;
+        SummingMethod                   _summingMethod;
         
         // 여러개의 상태를 비트단위로 나눠서 저장하기 위한 변수.
-        int                     _flag;
+        int                             _flag;
         
-        Vector2                 _wanderTarget;
-        double                  _wanderJitter;
-        double                  _wanderRadius;
-        double                  _wanderDistance;
+        cocos2d::Vec2                   _wanderTarget;
+        double                          _wanderJitter;
+        double                          _wanderRadius;
+        double                          _wanderDistance;
         
-        double                  _detectionBoxLength;
-        
-        
-        double                  _weightSeek;
-        double                  _weightFlee;
-        double                  _weightArrive;
-        double                  _weightPursuit;
-        double                  _weightWander;
-        double                  _weightObstacleAvoidance;
+        double                          _detectionBoxLength;
         
         
+        double                          _weightSeek;
+        double                          _weightFlee;
+        double                          _weightArrive;
+        double                          _weightPursuit;
+        double                          _weightWander;
+        double                          _weightObstacleAvoidance;
         
     private:
         
         // 찾기
-        Vector2 _seek(const Vector2& targetPos);
+        cocos2d::Vec2 _seek(const cocos2d::Vec2& targetPos);
         
         // 달아나기
-        Vector2 _flee(const Vector2& targetPos);
+        cocos2d::Vec2 _flee(const cocos2d::Vec2& targetPos);
         
         // 도착하기
-        Vector2 _arrive(const Vector2& targetPos, double deceleration);
+        cocos2d::Vec2 _arrive(const cocos2d::Vec2& targetPos, double deceleration);
         
         // 추적하기
-        Vector2 _pursuit(const Vehicle* evader);
+        cocos2d::Vec2 _pursuit(const Vehicle* evader);
         
         // 배회하기
-        Vector2 _wander();
+        cocos2d::Vec2 _wander();
         
         // 장애물 피하기
-        Vector2 _obstacleAvoidance(const std::vector<BaseEntity*> obstacles);
+        cocos2d::Vec2 _obstacleAvoidance(const std::vector<BaseEntity*> obstacles);
         
         void _calculateWeightedSum();
         void _calculatePrioritized();
@@ -113,7 +109,7 @@ namespace realtrick
         SteeringBehaviors(const SteeringBehaviors&) = delete;
         SteeringBehaviors& operator=(const SteeringBehaviors&) = delete;
         
-        Vector2 calculate();
+        cocos2d::Vec2 calculate();
         
         // 해당 비트자리가 동일한지 비교. (AND연산)
         bool isOnBehavior(BehaviorType type)        { return (_flag & (int)type) == (int)type; }

@@ -8,23 +8,14 @@
 
 #include "MovingEntity.hpp"
 #include "ParamLoader.hpp"
+#include "cocos2d.h"
 
 namespace realtrick
 {
 
-    MovingEntity::MovingEntity(int id) : BaseEntity(id),
-        _velocity(Vector2::kZero),
-        _heading(Vector2::kUnitY),
-        _side(_heading.getPerp()),
-        _mass(Prm.getValueAsDouble("Mass")),
-        _maxSpeed(Prm.getValueAsDouble("MaxSpeed")),
-        _maxForce(Prm.getValueAsDouble("MaxForce")),
-        _maxTurnRate(Prm.getValueAsDouble("MaxTurnRate"))
-    {}
-    
-    MovingEntity::MovingEntity(int id, const Vector2& pos, double r) : BaseEntity(id, pos, r),
-        _velocity(Vector2::kZero),
-        _heading(Vector2::kUnitY),
+    MovingEntity::MovingEntity() :
+        _velocity(cocos2d::Vec2::ZERO),
+        _heading(cocos2d::Vec2::UNIT_Y),
         _side(_heading.getPerp()),
         _mass(Prm.getValueAsDouble("Mass")),
         _maxSpeed(Prm.getValueAsDouble("MaxSpeed")),

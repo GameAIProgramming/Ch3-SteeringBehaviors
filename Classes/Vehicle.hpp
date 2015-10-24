@@ -31,8 +31,7 @@ namespace realtrick
         
     public:
         
-        Vehicle(cocos2d::Node* world, int id);
-        Vehicle(cocos2d::Node* world, int id, const Vector2& pos, double radius);
+        Vehicle(cocos2d::Node* world);
         
         virtual ~Vehicle()
         {

@@ -33,10 +33,10 @@ namespace realtrick
             double maxY = rect.getMaxY();
             
             return (rect.containPoint(circle.origin) ||
-                    circle.containPoint(Vector2(minX, minY)) ||
-                    circle.containPoint(Vector2(minX, maxY)) ||
-                    circle.containPoint(Vector2(maxX, minY)) ||
-                    circle.containPoint(Vector2(maxX, maxY)));
+                    circle.containPoint(cocos2d::Vec2(minX, minY)) ||
+                    circle.containPoint(cocos2d::Vec2(minX, maxY)) ||
+                    circle.containPoint(cocos2d::Vec2(maxX, minY)) ||
+                    circle.containPoint(cocos2d::Vec2(maxX, maxY)));
         }
         
         inline bool intersect(const Rect& rect, const Segment& segment)
@@ -51,13 +51,8 @@ namespace realtrick
                intersect(Segment(maxX, maxY, minX, maxY), segment) ||
                intersect(Segment(minX, maxY, minX, minY), segment))
                 return true;
+            
             return false;
-        }
-        
-        inline bool intersect(const Rect& rect, const Ray& ray)
-        {
-            bool ret;
-            return ret;
         }
         
         inline bool intersect(const Rect& rect, const Polygon& polygon)
@@ -77,7 +72,7 @@ namespace realtrick
             
             for(std::vector<Segment>::size_type i = 0 ; i < segs.size() ; ++ i)
             {
-                for(std::vector<Vector2>::size_type j = 0; j < polygon.vertices.size() - 1 ; ++ j)
+                for(std::vector<cocos2d::Vec2>::size_type j = 0; j < polygon.vertices.size() - 1 ; ++ j)
                 {
                     if(intersect(segs[i], Segment(polygon.vertices[j], polygon.vertices[j + 1])))
                         return true;
@@ -102,13 +97,13 @@ namespace realtrick
         
         inline bool intersect(const Circle& circle1, const Circle& circle2)
         {
-            return (circle1.origin.getDistanceSq(circle2.origin) <= (circle1.radius + circle2.radius) * (circle1.radius + circle2.radius));
+            return (circle1.origin.getDistanceSq(circle2.origin) >= (circle1.radius + circle2.radius) * (circle1.radius + circle2.radius));
         }
         
         inline bool intersect(const Circle& circle, const Segment& segment)
         {
-            Vector2 d = segment.end - segment.start;
-            Vector2 f = segment.start - circle.origin;
+            cocos2d::Vec2 d = segment.end - segment.start;
+            cocos2d::Vec2 f = segment.start - circle.origin;
             
             double a = d.getLengthSq();
             double b = 2 * f.dot(d);
@@ -139,15 +134,9 @@ namespace realtrick
             return false;
         }
         
-        inline bool intersect(const Circle& circle, const Ray& ray)
-        {
-            bool ret;
-            return ret;
-        }
-        
         inline bool intersect(const Circle& circle, const Polygon& polygon)
         {
-            for(std::vector<Vector2>::size_type j = 0; j < polygon.vertices.size() - 1 ; ++ j)
+            for(std::vector<cocos2d::Vec2>::size_type j = 0; j < polygon.vertices.size() - 1 ; ++ j)
             {
                 if(intersect(circle, Segment(polygon.vertices[j], polygon.vertices[j + 1])))
                     return true;
@@ -191,28 +180,9 @@ namespace realtrick
             return true;
         }
         
-        inline bool intersect(const Segment& segment, const Ray& ray)
-        {
-            const Vector2 v1 = ray.start - segment.start;
-            const Vector2 v2 = segment.end - segment.start;
-            Vector2 v3;
-            if((segment.getDirection()).cross(ray.dir) > 0)
-                v3 = ray.dir.getRPerp();
-            else
-                v3 = ray.dir.getPerp();
-            
-            const double t1 = fabs(v2.cross(v1)) / v2.dot(v3);
-            const double t2 = v1.dot(v3) / v2.dot(v3);
-            
-            if( t1 < 0) return false;
-            if( t2 > 0 && t2 < 1) return true;
-            
-            return false;
-        }
-        
         inline bool intersect(const Segment& segment, const Polygon& polygon)
         {
-            for(std::vector<Vector2>::size_type j = 0; j < polygon.vertices.size() - 1 ; ++ j)
+            for(std::vector<cocos2d::Vec2>::size_type j = 0; j < polygon.vertices.size() - 1 ; ++ j)
             {
                 if(intersect(segment, Segment(polygon.vertices[j], polygon.vertices[j + 1])))
                     return true;
@@ -223,40 +193,6 @@ namespace realtrick
             return false;
 
         }
-        
-        
-        //
-        // Ray
-        //
-        inline bool intersect(const Ray& ray, const Rect& rect)
-        {
-            bool ret;
-            return ret;
-        }
-        
-        inline bool intersect(const Ray& ray, const Circle& circle)
-        {
-            bool ret;
-            return ret;
-        }
-        
-        inline bool intersect(const Ray& ray, const Segment& segment)
-        {
-            return intersect(segment, ray);
-        }
-        
-        inline bool intersect(const Ray& ray1, const Ray& ray2)
-        {
-            bool ret;
-            return ret;
-        }
-        
-        inline bool intersect(const Ray& ray, const Polygon& polygon)
-        {
-            bool ret;
-            return ret;
-        }
-        
         
         //
         // Polygon
@@ -276,18 +212,12 @@ namespace realtrick
             return intersect(segment, polygon);
         }
         
-        inline bool intersect(const Polygon& polygon, const Ray& ray)
-        {
-            bool ret;
-            return ret;
-        }
-        
         inline bool intersect(const Polygon& polygon1, const Polygon& polygon2)
         {
             
-            for(std::vector<Vector2>::size_type i = 0; i < polygon1.vertices.size() - 1 ; ++ i)
+            for(std::vector<cocos2d::Vec2>::size_type i = 0; i < polygon1.vertices.size() - 1 ; ++ i)
             {
-                for(std::vector<Vector2>::size_type j = 0; j < polygon2.vertices.size() - 1 ; ++ j)
+                for(std::vector<cocos2d::Vec2>::size_type j = 0; j < polygon2.vertices.size() - 1 ; ++ j)
                 {
                     if(intersect(Segment(polygon1.vertices[i], polygon1.vertices[i + 1]), Segment(polygon2.vertices[j], polygon2.vertices[j + 1])))
                         return true;
@@ -297,7 +227,7 @@ namespace realtrick
                     return true;
             }
             
-            for(std::vector<Vector2>::size_type i = 0; i < polygon2.vertices.size() - 1 ; ++ i)
+            for(std::vector<cocos2d::Vec2>::size_type i = 0; i < polygon2.vertices.size() - 1 ; ++ i)
             {
                 if(intersect(Segment(polygon1.vertices.back(), polygon1.vertices.front()), Segment(polygon2.vertices[i], polygon2.vertices[i + 1])))
                     return true;

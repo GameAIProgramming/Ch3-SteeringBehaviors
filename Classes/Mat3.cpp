@@ -74,7 +74,7 @@ namespace realtrick
         _multiply(scaleMat);
     }
     
-    void Mat3::scale(const Vector2& scale)
+    void Mat3::scale(const cocos2d::Vec2& scale)
     {
         Mat3 scaleMat;
         scaleMat._11 = scale.x;
@@ -91,7 +91,7 @@ namespace realtrick
         _multiply(rotateMat);
     }
     
-    void Mat3::rotate(const Vector2& heading, const Vector2& side)
+    void Mat3::rotate(const cocos2d::Vec2& heading, const cocos2d::Vec2& side)
     {
         Mat3 rotateMat;
         rotateMat._11 = heading.x;      rotateMat._12 = heading.y;      rotateMat._13 = 0.0;
@@ -100,7 +100,7 @@ namespace realtrick
         _multiply(rotateMat);
     }
     
-    void Mat3::translate(const Vector2& trans)
+    void Mat3::translate(const cocos2d::Vec2& trans)
     {
         Mat3 transMat;
         transMat._31 = trans.x;
@@ -108,20 +108,20 @@ namespace realtrick
         _multiply(transMat);
     }
     
-    Vector2 Mat3::getTransformedVector(const Vector2& v)
+    cocos2d::Vec2 Mat3::getTransformedVector(const cocos2d::Vec2& v)
     {
-        Vector2 ret;
+        cocos2d::Vec2 ret;
         ret.x = (v.x * _11) + (v.y * _21) + _31;
         ret.y = (v.x * _12) + (v.y * _22) + _32;
         return ret;
     }
     
-    std::vector<Vector2> Mat3::getTransformedVector(std::vector<Vector2> v)
+    std::vector<cocos2d::Vec2> Mat3::getTransformedVector(std::vector<cocos2d::Vec2> v)
     {
-        std::vector<Vector2> ret;
+        std::vector<cocos2d::Vec2> ret;
         for( auto &d : v)
         {
-            Vector2 temp;
+            cocos2d::Vec2 temp;
             temp.x = (d.x * _11) + (d.y * _21) + _31;
             temp.y = (d.x * _12) + (d.y * _22) + _32;
             ret.push_back(temp);
