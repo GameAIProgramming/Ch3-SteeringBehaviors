@@ -11,14 +11,7 @@
 namespace realtrick
 {
     
-    Vehicle::Vehicle(cocos2d::Node* world, int id) : MovingEntity(id)
-    {
-        _gameWorld = world;
-        _type = EntityType::kVehicle;
-        _steering = new SteeringBehaviors(this);
-    }
-    
-    Vehicle::Vehicle(cocos2d::Node* world, int id, const Vector2& pos, double radius) : MovingEntity(id, pos, radius)
+    Vehicle::Vehicle(cocos2d::Node* world)
     {
         _gameWorld = world;
         _type = EntityType::kVehicle;
@@ -34,24 +27,26 @@ namespace realtrick
     {
         _timeElapsed = dt;
         
-        Vector2 oldPos = getPos();
-        Vector2 steeringForce = _steering->calculate();
-        Vector2 acceleration = steeringForce / getMass();
+        cocos2d::Vec2 oldPos = getPosition();
+        cocos2d::Vec2 steeringForce = _steering->calculate();
+        cocos2d::Vec2 acceleration = steeringForce / getMass();
         
         _velocity += acceleration * dt;
-        _velocity.truncate(_maxSpeed);
-        _pos += _velocity * dt;
+        //_velocity.truncate(_maxSpeed);
+        setPosition(getPosition() + _velocity * dt);
         
         if(_velocity.getLengthSq() > kMathEpsilonSq)
         {
             _heading = _velocity.getNormalized();
         }
         
-        if(_pos.x > 600.0f) _pos.x = 1.0f;
-        else if(_pos.x < 0.0f) _pos.x = 599.0f;
+        if(getPosition().x > 600.0f) setPosition(1.0f, getPosition().y);
+        else if(getPosition().x < 0.0f) setPosition(599.0f, getPosition().y);
         
-        if(_pos.y > 600.0f) _pos.y = 1.0f;
-        else if(_pos.y < 0.0f) _pos.y = 599.0f;
-        
+        if(getPosition().y > 600.0f) setPosition(getPosition().x, 1.0f);
+        else if(getPosition().y < 0.0f) setPosition(getPosition().x, 599.0f);
     }
 }
+
+
+

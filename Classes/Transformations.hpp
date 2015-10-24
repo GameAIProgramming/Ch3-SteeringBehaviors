@@ -10,13 +10,12 @@
 
 #include <vector>
 
-#include "Vector2.hpp"
 #include "Mat3.hpp"
 
 namespace realtrick
 {
     
-    inline std::vector<Vector2> getWorldTransformedVectors(const std::vector<Vector2>& points, const Vector2& pos, const Vector2& heading, const Vector2& side, const Vector2& scale)
+    inline std::vector<cocos2d::Vec2> getWorldTransformedVectors(const std::vector<cocos2d::Vec2>& points, const cocos2d::Vec2& pos, const cocos2d::Vec2& heading, const cocos2d::Vec2& side, const cocos2d::Vec2& scale)
     {
         Mat3 transMat;
         
@@ -30,7 +29,7 @@ namespace realtrick
         return transMat.getTransformedVector(points);
     }
     
-    inline std::vector<Vector2> getWorldTransformedVectors(const std::vector<Vector2>& points, const Vector2& pos, const Vector2& heading, const Vector2& side)
+    inline std::vector<cocos2d::Vec2> getWorldTransformedVectors(const std::vector<cocos2d::Vec2>& points, const cocos2d::Vec2& pos, const cocos2d::Vec2& heading, const cocos2d::Vec2& side)
     {
         Mat3 transMat;
         
@@ -40,7 +39,7 @@ namespace realtrick
         return transMat.getTransformedVector(points);
     }
     
-    inline Vector2 getWorldTransformedVector(const Vector2& point, const Vector2& heading, const Vector2& side, const Vector2& pos)
+    inline cocos2d::Vec2 getWorldTransformedVector(const cocos2d::Vec2& point, const cocos2d::Vec2& heading, const cocos2d::Vec2& side, const cocos2d::Vec2& pos)
     {
         Mat3 transMat;
         
@@ -50,7 +49,7 @@ namespace realtrick
         return transMat.getTransformedVector(point);
     }
     
-    inline Vector2 getLocalSpaceVector(const Vector2& point, const Vector2& heading, const Vector2& side, const Vector2& pos)
+    inline cocos2d::Vec2 getLocalSpaceVector(const cocos2d::Vec2& point, const cocos2d::Vec2& heading, const cocos2d::Vec2& side, const cocos2d::Vec2& pos)
     {
         Mat3 transMat;
         double x = -pos.dot(heading);

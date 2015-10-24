@@ -10,7 +10,6 @@ private:
     cocos2d::Size                           _winSize;
     
     static int                              _nextValidID;
-    cocos2d::Sprite*                        _spriteManager;
     cocos2d::Sprite*                        _uiLayer;
     cocos2d::Sprite*                        _crossHair;
     

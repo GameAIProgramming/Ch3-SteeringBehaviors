@@ -26,7 +26,7 @@ namespace realtrick
         setRect(x, y, width, height);
     }
     
-    Rect::Rect(const Vector2& pos, double width, double height)
+    Rect::Rect(const cocos2d::Vec2& pos, double width, double height)
     {
         setRect(pos.x, pos.y, width, height);
     }
@@ -87,7 +87,7 @@ namespace realtrick
         return (origin == rect.origin && width == rect.width && height == rect.height);
     }
     
-    bool Rect::containPoint(const Vector2& point) const
+    bool Rect::containPoint(const cocos2d::Vec2& point) const
     {
         return (point.x >= getMinX() && point.x <= getMaxX() && point.y >= getMinY() && point.y <= getMaxY());
     }
@@ -110,7 +110,7 @@ namespace realtrick
         setCircle(x, y, r);
     }
     
-    Circle::Circle(const Vector2& center, double r)
+    Circle::Circle(const cocos2d::Vec2& center, double r)
     {
         setCircle(origin.x, origin.y, r);
     }
@@ -135,12 +135,12 @@ namespace realtrick
         this->radius = r;
     }
     
-    Circle Circle::getTranslatedCircle(const Vector2& dir, double distance)
+    Circle Circle::getTranslatedCircle(const cocos2d::Vec2& dir, double distance)
     {
         return Circle(origin.x + dir.x * distance, origin.y + dir.y * distance, radius);
     }
     
-    bool Circle::containPoint(const Vector2& point) const
+    bool Circle::containPoint(const cocos2d::Vec2& point) const
     {
         return (origin.getDistanceSq(point) <= radius * radius);
     }
@@ -161,7 +161,7 @@ namespace realtrick
         setSegment(sx, sy, ex, ey);
     }
     
-    Segment::Segment(const Vector2& start, const Vector2& end)
+    Segment::Segment(const cocos2d::Vec2& start, const cocos2d::Vec2& end)
     {
         setSegment(start.x, start.y, end.x, end.y);
     }
@@ -187,7 +187,7 @@ namespace realtrick
         this->end.y = ey;
     }
     
-    Vector2 Segment::getDirection() const
+    cocos2d::Vec2 Segment::getDirection() const
     {
         return (end - start).getNormalized();
     }
@@ -203,7 +203,7 @@ namespace realtrick
     }
     
     // TODO 구현
-    bool Segment::containPoint(const Vector2& point) const
+    bool Segment::containPoint(const cocos2d::Vec2& point) const
     {
         return false;
     }
@@ -216,7 +216,7 @@ namespace realtrick
     Polygon::Polygon()
     {}
     
-    Polygon::Polygon(const std::vector<Vector2>& segs)
+    Polygon::Polygon(const std::vector<cocos2d::Vec2>& segs)
     {
         setPolygon(segs);
     }
@@ -235,23 +235,23 @@ namespace realtrick
         
     }
     
-    void Polygon::setPolygon(const std::vector<Vector2>& segs)
+    void Polygon::setPolygon(const std::vector<cocos2d::Vec2>& segs)
     {
         this->vertices.clear();
         
-        for(std::vector<Vector2>::size_type i = 0 ; i < segs.size() ; ++ i)
+        for(std::vector<cocos2d::Vec2>::size_type i = 0 ; i < segs.size() ; ++ i)
         {
             this->vertices.push_back(segs.at(i));
         }
     }
     
-    void Polygon::pushVertex(const Vector2 point)
+    void Polygon::pushVertex(const cocos2d::Vec2 point)
     {
         this->vertices.push_back(point);
     }
     
     // TODO 구현
-    bool Polygon::containPoint(const Vector2& point) const
+    bool Polygon::containPoint(const cocos2d::Vec2& point) const
     {
         return false;
     }
