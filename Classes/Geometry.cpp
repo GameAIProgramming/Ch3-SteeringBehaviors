@@ -21,12 +21,12 @@ namespace realtrick
         setRect(0.0, 0.0, 0.0, 0.0);
     }
     
-    Rect::Rect(double x, double y, double width, double height)
+    Rect::Rect(float x, float y, float width, float height)
     {
         setRect(x, y, width, height);
     }
     
-    Rect::Rect(const cocos2d::Vec2& pos, double width, double height)
+    Rect::Rect(const cocos2d::Vec2& pos, float width, float height)
     {
         setRect(pos.x, pos.y, width, height);
     }
@@ -44,7 +44,7 @@ namespace realtrick
         return *this;
     }
     
-    void Rect::setRect(double x, double y, double width, double height)
+    void Rect::setRect(float x, float y, float width, float height)
     {
         origin.x = x;
         origin.y = y;
@@ -52,32 +52,32 @@ namespace realtrick
         this->height = height;
     }
     
-    double Rect::getMinX() const
+    float Rect::getMinX() const
     {
         return origin.x;
     }
     
-    double Rect::getMidX() const
+    float Rect::getMidX() const
     {
         return origin.x + width / 2.0;
     }
     
-    double Rect::getMaxX() const
+    float Rect::getMaxX() const
     {
         return origin.x + width;
     }
     
-    double Rect::getMinY() const
+    float Rect::getMinY() const
     {
         return origin.y;
     }
     
-    double Rect::getMidY() const
+    float Rect::getMidY() const
     {
         return origin.y + height / 2.0;
     }
     
-    double Rect::getMaxY() const
+    float Rect::getMaxY() const
     {
         return origin.y + height;
     }
@@ -105,12 +105,12 @@ namespace realtrick
         setCircle(0.0, 0.0, 0.0);
     }
     
-    Circle::Circle(double x, double y, double r)
+    Circle::Circle(float x, float y, float r)
     {
         setCircle(x, y, r);
     }
     
-    Circle::Circle(const cocos2d::Vec2& center, double r)
+    Circle::Circle(const cocos2d::Vec2& origin, float r)
     {
         setCircle(origin.x, origin.y, r);
     }
@@ -128,14 +128,14 @@ namespace realtrick
         return *this;
     }
     
-    void Circle::setCircle(double x, double y, double r)
+    void Circle::setCircle(float x, float y, float r)
     {
         this->origin.x = x;
         this->origin.y = y;
         this->radius = r;
     }
     
-    Circle Circle::getTranslatedCircle(const cocos2d::Vec2& dir, double distance)
+    Circle Circle::getTranslatedCircle(const cocos2d::Vec2& dir, float distance)
     {
         return Circle(origin.x + dir.x * distance, origin.y + dir.y * distance, radius);
     }
@@ -156,7 +156,7 @@ namespace realtrick
         setSegment(0.0, 0.0, 0.0, 0.0);
     }
     
-    Segment::Segment(double sx, double sy, double ex, double ey)
+    Segment::Segment(float sx, float sy, float ex, float ey)
     {
         setSegment(sx, sy, ex, ey);
     }
@@ -179,7 +179,7 @@ namespace realtrick
         return *this;
     }
     
-    void Segment::setSegment(double sx, double sy, double ex, double ey)
+    void Segment::setSegment(float sx, float sy, float ex, float ey)
     {
         this->start.x = sx;
         this->start.y = sy;
@@ -192,12 +192,12 @@ namespace realtrick
         return (end - start).getNormalized();
     }
     
-    double Segment::getDistance() const
+    float Segment::getDistance() const
     {
         return start.getDistance(end);
     }
     
-    double Segment::getDistanceSq() const
+    float Segment::getDistanceSq() const
     {
         return start.getDistanceSq(end);
     }

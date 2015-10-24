@@ -54,9 +54,9 @@ namespace realtrick
     
     void Mat3::identity()
     {
-        _11 = 1.0;  _12 = 0.0;  _13 = 0.0;
-        _21 = 0.0;  _22 = 1.0;  _23 = 0.0;
-        _31 = 0.0;  _32 = 0.0;  _33 = 1.0;
+        _11 = 1.0f;     _12 = 0.0f;     _13 = 0.0f;
+        _21 = 0.0f;     _22 = 1.0f;     _23 = 0.0f;
+        _31 = 0.0f;     _32 = 0.0f;     _33 = 1.0f;
     }
     
     void Mat3::scale(float scale)
@@ -83,7 +83,7 @@ namespace realtrick
     }
     
     
-    void Mat3::rotate(double sheta)
+    void Mat3::rotate(float sheta)
     {
         Mat3 rotateMat;
         rotateMat._11 = cos(sheta); rotateMat._12 = sin(sheta);
@@ -94,9 +94,9 @@ namespace realtrick
     void Mat3::rotate(const cocos2d::Vec2& heading, const cocos2d::Vec2& side)
     {
         Mat3 rotateMat;
-        rotateMat._11 = heading.x;      rotateMat._12 = heading.y;      rotateMat._13 = 0.0;
-        rotateMat._21 = side.x;         rotateMat._22 = side.y;         rotateMat._23 = 0.0;
-        rotateMat._31 = 0.0;            rotateMat._32 = 0.0;            rotateMat._33 = 1.0;
+        rotateMat._11 = heading.x;      rotateMat._12 = heading.y;      rotateMat._13 = 0.0f;
+        rotateMat._21 = side.x;         rotateMat._22 = side.y;         rotateMat._23 = 0.0f;
+        rotateMat._31 = 0.0f;           rotateMat._32 = 0.0f;           rotateMat._33 = 1.0f;
         _multiply(rotateMat);
     }
     

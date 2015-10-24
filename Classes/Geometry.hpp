@@ -21,21 +21,21 @@ namespace realtrick
     public:
     
         cocos2d::Vec2           origin;
-        double                  width;
-        double                  height;
+        float                   width;
+        float                   height;
     
         Rect();
-        Rect(double x, double y, double width, double height);
-        Rect(const cocos2d::Vec2& pos, double width, double height);
+        Rect(float x, float y, float width, float height);
+        Rect(const cocos2d::Vec2& pos, float width, float height);
         Rect(const Rect& copy);
         Rect& operator=(const Rect& rhs);
-        void setRect(double x, double y, double width, double height);
-        double getMinX() const;
-        double getMidX() const;
-        double getMaxX() const;
-        double getMinY() const;
-        double getMidY() const;
-        double getMaxY() const;
+        void setRect(float x, float y, float width, float height);
+        float getMinX() const;
+        float getMidX() const;
+        float getMaxX() const;
+        float getMinY() const;
+        float getMidY() const;
+        float getMaxY() const;
         bool equals(const Rect& rect) const;
         bool containPoint(const cocos2d::Vec2& point) const;
         static const Rect kZero;
@@ -50,15 +50,15 @@ namespace realtrick
     public:
         
         cocos2d::Vec2           origin;
-        double                  radius;
+        float                   radius;
         
         Circle();
-        Circle(double x, double y, double r);
-        Circle(const cocos2d::Vec2& origin, double r);
+        Circle(float x, float y, float r);
+        Circle(const cocos2d::Vec2& origin, float r);
         Circle(const Circle& copy);
         Circle& operator=(const Circle& rhs);
-        void setCircle(double x, double y, double r);
-        Circle getTranslatedCircle(const cocos2d::Vec2& dir, double distance);
+        void setCircle(float x, float y, float r);
+        Circle getTranslatedCircle(const cocos2d::Vec2& dir, float distance);
         bool containPoint(const cocos2d::Vec2& point) const;
         
         virtual ~Circle() {}
@@ -76,14 +76,14 @@ namespace realtrick
         cocos2d::Vec2         end;
         
         Segment();
-        Segment(double sx, double sy, double ex, double ey);
+        Segment(float sx, float sy, float ex, float ey);
         Segment(const cocos2d::Vec2& start, const cocos2d::Vec2& end);
         Segment(const Segment& copy);
         Segment& operator=(const Segment& rhs);
-        void setSegment(double sx, double sy, double ex, double dy);
+        void setSegment(float sx, float sy, float ex, float dy);
         cocos2d::Vec2 getDirection() const;
-        double getDistance() const;
-        double getDistanceSq() const;
+        float getDistance() const;
+        float getDistanceSq() const;
         bool containPoint(const cocos2d::Vec2& point) const;
         
         virtual ~Segment() {}
@@ -107,25 +107,6 @@ namespace realtrick
         virtual ~Polygon() { vertices.clear(); }
         
     };
-    
-//    
-//    inline float randFloat(float min, float max)
-//    {
-//        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-//        std::mt19937 engine((unsigned int)seed);
-//        std::uniform_real_distribution<float> distribution(min, max);
-//        auto generator = bind(distribution, engine);
-//        return generator();
-//    }
-//    
-//    inline int randInt(int min, int max)
-//    {
-//        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-//        std::mt19937 engine((unsigned int)seed);
-//        std::uniform_int_distribution<int> distribution(min, max);
-//        auto generator = bind(distribution, engine);
-//        return generator();
-//    }
     
 }
 

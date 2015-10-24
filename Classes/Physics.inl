@@ -27,10 +27,10 @@ namespace realtrick
         
         inline bool intersect(const Rect& rect, const Circle& circle)
         {
-            double minX = rect.getMinX();
-            double minY = rect.getMinY();
-            double maxX = rect.getMaxX();
-            double maxY = rect.getMaxY();
+            float minX = rect.getMinX();
+            float minY = rect.getMinY();
+            float maxX = rect.getMaxX();
+            float maxY = rect.getMaxY();
             
             return (rect.containPoint(circle.origin) ||
                     circle.containPoint(cocos2d::Vec2(minX, minY)) ||
@@ -41,10 +41,10 @@ namespace realtrick
         
         inline bool intersect(const Rect& rect, const Segment& segment)
         {
-            double minX = rect.getMinX();
-            double minY = rect.getMinY();
-            double maxX = rect.getMaxX();
-            double maxY = rect.getMaxY();
+            float minX = rect.getMinX();
+            float minY = rect.getMinY();
+            float maxX = rect.getMaxX();
+            float maxY = rect.getMaxY();
             
             if(intersect(Segment(minX, minY, maxX, minY), segment) ||
                intersect(Segment(maxX, minY, maxX, maxY), segment) ||
@@ -57,10 +57,10 @@ namespace realtrick
         
         inline bool intersect(const Rect& rect, const Polygon& polygon)
         {
-            double minX = rect.getMinX();
-            double minY = rect.getMinY();
-            double maxX = rect.getMaxX();
-            double maxY = rect.getMaxY();
+            float minX = rect.getMinX();
+            float minY = rect.getMinY();
+            float maxX = rect.getMaxX();
+            float maxY = rect.getMaxY();
             
             std::vector<Segment> segs
             {
@@ -97,7 +97,7 @@ namespace realtrick
         
         inline bool intersect(const Circle& circle1, const Circle& circle2)
         {
-            return (circle1.origin.getDistanceSq(circle2.origin) >= (circle1.radius + circle2.radius) * (circle1.radius + circle2.radius));
+            return (circle1.origin.getDistanceSq(circle2.origin) <= (circle1.radius + circle2.radius) * (circle1.radius + circle2.radius));
         }
         
         inline bool intersect(const Circle& circle, const Segment& segment)
@@ -105,27 +105,27 @@ namespace realtrick
             cocos2d::Vec2 d = segment.end - segment.start;
             cocos2d::Vec2 f = segment.start - circle.origin;
             
-            double a = d.getLengthSq();
-            double b = 2 * f.dot(d);
-            double c = f.getLengthSq() - (circle.radius * circle.radius);
+            float a = d.getLengthSq();
+            float b = 2 * f.dot(d);
+            float c = f.getLengthSq() - (circle.radius * circle.radius);
             
-            double discriminant = b * b - 4 * a*c;
-            if (discriminant < 0)
+            float discriminant = b * b - 4.0f * a * c;
+            if (discriminant < 0.0f)
             {
                 return false;
             }
             else
             {
                 discriminant = sqrt(discriminant);
-                double t1 = (-b - discriminant) / (2 * a);
-                double t2 = (-b + discriminant) / (2 * a);
+                float t1 = (-b - discriminant) / (2.0f * a);
+                float t2 = (-b + discriminant) / (2.0f * a);
                 
-                if (t1 >= 0 && t1 <= 1)
+                if (t1 >= 0.0f && t1 <= 1.0f)
                 {
                     return true;
                 }
                 
-                if (t2 >= 0 && t2 <= 1)
+                if (t2 >= 0.0f && t2 <= 1.0f)
                 {
                     return true;
                 }
@@ -163,19 +163,25 @@ namespace realtrick
         
         inline bool intersect(const Segment& segment1, const Segment& segment2)
         {
-            float t, s;
-            float under = (segment2.end.y - segment2.start.y) * (segment1.end.x - segment1.start.x) - (segment2.end.x - segment2.start.x) * (segment1.end.y - segment1.start.y);
+            float under =
+            (segment2.end.y - segment2.start.y) * (segment1.end.x - segment1.start.x) -
+            (segment2.end.x - segment2.start.x) * (segment1.end.y - segment1.start.y);
             
-            if (under == 0) return false;
+            if (under == 0.0f) return false;
             
-            float _t = (segment2.end.x - segment2.start.x) * (segment1.start.y - segment2.start.y) - (segment2.end.y - segment2.start.y) * (segment1.start.x - segment2.start.x);
-            float _s = (segment1.end.x - segment1.start.x) * (segment1.start.y - segment2.start.y) - (segment1.end.y - segment1.start.y) * (segment1.start.x - segment2.start.x);
+            float _t =
+            (segment2.end.x - segment2.start.x) * (segment1.start.y - segment2.start.y) -
+            (segment2.end.y - segment2.start.y) * (segment1.start.x - segment2.start.x);
             
-            t = _t / under;
-            s = _s / under;
+            float _s =
+            (segment1.end.x - segment1.start.x) * (segment1.start.y - segment2.start.y) -
+            (segment1.end.y - segment1.start.y) * (segment1.start.x - segment2.start.x);
             
-            if (t < 0.0 || t > 1.0 || s < 0.0 || s > 1.0) return false;
-            if (_t == 0 && _s == 0) return false;
+            float t = _t / under;
+            float s = _s / under;
+            
+            if (t < 0.0f || t > 1.0f || s < 0.0f || s > 1.0f) return false;
+            if (_t == 0.0f && _s == 0.0f) return false;
             
             return true;
         }
@@ -191,7 +197,6 @@ namespace realtrick
                 return true;
             
             return false;
-
         }
         
         //

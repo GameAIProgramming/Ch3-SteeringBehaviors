@@ -29,11 +29,16 @@ namespace realtrick
     }
     
     template <class T, class conT>
-    void TagNeighbors(const T& entity, const conT& containerOfEntities, double radius)
+    void TagNeighbors(const T& entity, const conT& containerOfEntities, float radius)
     {
         for(auto iter = containerOfEntities.begin(); iter != containerOfEntities.end() ; ++iter)
         {
-            entity->setFlag(false);
+            (*iter)->setFlag(false);
+            if((*iter) != entity && physics::intersect(Circle(entity->getPosition(), entity->getBRadius() + radius),
+                                                       Circle((*iter)->getPosition(), (*iter)->getBRadius())))
+            {
+                (*iter)->setFlag(true);
+            }
         }
     }
     

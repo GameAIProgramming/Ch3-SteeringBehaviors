@@ -24,9 +24,9 @@ namespace realtrick
         
     public:
         
-        double _11, _12, _13;
-        double _21, _22, _23;
-        double _31, _32, _33;
+        float _11, _12, _13;
+        float _21, _22, _23;
+        float _31, _32, _33;
         
         Mat3();
         Mat3(const Mat3& copy);
@@ -36,7 +36,7 @@ namespace realtrick
         void scale(float scale);
         void scale(float xScale, float yScale);
         void scale(const cocos2d::Vec2& scale);
-        void rotate(double sheta);
+        void rotate(float sheta);
         void rotate(const cocos2d::Vec2& heading, const cocos2d::Vec2& side);
         void translate(const cocos2d::Vec2& trans);
         cocos2d::Vec2 getTransformedVector(const cocos2d::Vec2& v);

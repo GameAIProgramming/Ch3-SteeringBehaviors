@@ -15,6 +15,7 @@ namespace realtrick
     
     class Vehicle;
     class BaseEntity;
+    class Obstacle;
     
     enum class SummingMethod : short
     {
@@ -65,19 +66,19 @@ namespace realtrick
         int                             _flag;
         
         cocos2d::Vec2                   _wanderTarget;
-        double                          _wanderJitter;
-        double                          _wanderRadius;
-        double                          _wanderDistance;
+        float                           _wanderJitter;
+        float                           _wanderRadius;
+        float                           _wanderDistance;
         
-        double                          _detectionBoxLength;
+        float                           _detectionBoxLength;
         
         
-        double                          _weightSeek;
-        double                          _weightFlee;
-        double                          _weightArrive;
-        double                          _weightPursuit;
-        double                          _weightWander;
-        double                          _weightObstacleAvoidance;
+        float                           _weightSeek;
+        float                           _weightFlee;
+        float                           _weightArrive;
+        float                           _weightPursuit;
+        float                           _weightWander;
+        float                           _weightObstacleAvoidance;
         
     private:
         
@@ -88,7 +89,7 @@ namespace realtrick
         cocos2d::Vec2 _flee(const cocos2d::Vec2& targetPos);
         
         // 도착하기
-        cocos2d::Vec2 _arrive(const cocos2d::Vec2& targetPos, double deceleration);
+        cocos2d::Vec2 _arrive(const cocos2d::Vec2& targetPos, float deceleration);
         
         // 추적하기
         cocos2d::Vec2 _pursuit(const Vehicle* evader);
@@ -97,7 +98,7 @@ namespace realtrick
         cocos2d::Vec2 _wander();
         
         // 장애물 피하기
-        cocos2d::Vec2 _obstacleAvoidance(const std::vector<BaseEntity*> obstacles);
+        cocos2d::Vec2 _obstacleAvoidance(const cocos2d::Vector<Obstacle*> obstacles);
         
         void _calculateWeightedSum();
         void _calculatePrioritized();
