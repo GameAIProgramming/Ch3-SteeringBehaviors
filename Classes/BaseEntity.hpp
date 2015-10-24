@@ -27,25 +27,25 @@ namespace realtrick
         
     protected:
     
-        double          _BRadius;
+        float           _BRadius;
         EntityType      _type;
         bool            _flag;
     
     public:
         
-        BaseEntity() : _type(EntityType::kDefault), _BRadius(15.0), _flag(false)
+        BaseEntity() : _type(EntityType::kDefault), _BRadius(15.0f), _flag(false)
         {}
     
         virtual ~BaseEntity()
         {}
     
-        double      getBRadius() const          { return _BRadius; }
-        EntityType  getEntType() const          { return _type; }
-        bool        isFlagged() const            { return _flag; }
+        float       getBRadius() const              { return _BRadius; }
+        EntityType  getEntType() const              { return _type; }
+        bool        isFlagged() const               { return _flag; }
         
-        void setBRadius(double r)               { _BRadius = r; }
-        void setEntityType(EntityType type)     { _type = type; }
-        void setFlag(bool flag)                  { _flag = flag; }
+        void setBRadius(float r)                    { _BRadius = r; }
+        void setEntityType(EntityType type)         { _type = type; }
+        void setFlag(bool flag)                     { _flag = flag; }
         
         virtual bool handleMessage(const Telegram& msg) = 0;
         virtual void update(float dt) = 0;

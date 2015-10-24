@@ -19,7 +19,7 @@ namespace realtrick
     {
         Mat3 transMat;
         
-        if(scale.x != 1.0 || scale.y != 1.0)
+        if(scale.x != 1.0f || scale.y != 1.0f)
         {
             transMat.scale(scale);
         }
@@ -49,15 +49,34 @@ namespace realtrick
         return transMat.getTransformedVector(point);
     }
     
+    inline cocos2d::Vec2 getWorldTransformedVector(const cocos2d::Vec2& point, const cocos2d::Vec2& heading, const cocos2d::Vec2& side)
+    {
+        Mat3 transMat;
+        
+        transMat.rotate(heading, side);
+        
+        return transMat.getTransformedVector(point);
+    }
+    
     inline cocos2d::Vec2 getLocalSpaceVector(const cocos2d::Vec2& point, const cocos2d::Vec2& heading, const cocos2d::Vec2& side, const cocos2d::Vec2& pos)
     {
         Mat3 transMat;
-        double x = -pos.dot(heading);
-        double y = -pos.dot(side);
+        float x = -pos.dot(heading);
+        float y = -pos.dot(side);
         
         transMat._11 = heading.x;       transMat._12 = side.x;
         transMat._21 = heading.y;       transMat._22 = side.y;
         transMat._31 = x;               transMat._32 = y;
+        
+        return transMat.getTransformedVector(point);
+    }
+    
+    inline cocos2d::Vec2 getLocalSpaceVector(const cocos2d::Vec2& point, const cocos2d::Vec2& heading, const cocos2d::Vec2& side)
+    {
+        Mat3 transMat;
+        
+        transMat._11 = heading.x;       transMat._12 = side.x;
+        transMat._21 = heading.y;       transMat._22 = side.y;
         
         return transMat.getTransformedVector(point);
     }

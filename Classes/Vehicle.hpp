@@ -12,6 +12,8 @@
 #include "cocos2d.h"
 #include "SteeringBehaviors.hpp"
 
+class HelloWorldScene;
+
 namespace realtrick
 {
     
@@ -20,7 +22,7 @@ namespace realtrick
         
     private:
         
-        cocos2d::Node*              _gameWorld;
+        HelloWorldScene*            _gameWorld;
         SteeringBehaviors*          _steering;
         
         float                       _timeElapsed;
@@ -41,8 +43,8 @@ namespace realtrick
         virtual bool handleMessage(const Telegram& msg) override;
         virtual void update(float dt) override;
 
-        cocos2d::Node* getGameWorld() const             { return _gameWorld; }
-        void setGameWorld(cocos2d::Node* world)         { _gameWorld = world; }
+        HelloWorldScene* getGameWorld() const           { return _gameWorld; }
+        void setGameWorld(HelloWorldScene* world)       { _gameWorld = world; }
         
         SteeringBehaviors* getSteering() const          { return _steering; }
         float getTimeElapsed() const                    { return _timeElapsed; }

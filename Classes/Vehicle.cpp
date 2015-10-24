@@ -46,17 +46,18 @@ namespace realtrick
         cocos2d::Vec2 acceleration = steeringForce / getMass();
         
         _velocity += acceleration * dt;
-        //_velocity.truncate(_maxSpeed);
+        
         if(_velocity.getLengthSq() > _maxSpeed * _maxSpeed)
         {
             _velocity.normalize();
             _velocity *= _maxSpeed;
         }
+        
         setPosition(getPosition() + _velocity * dt);
         
         if(_velocity.getLengthSq() > kMathEpsilonSq)
         {
-            _heading = _velocity.getNormalized();
+            setHeading(_velocity.getNormalized());
         }
         
         if(getPosition().x > 600.0f) setPosition(1.0f, getPosition().y);
