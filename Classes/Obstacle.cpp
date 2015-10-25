@@ -25,7 +25,6 @@ namespace realtrick
             pRet = nullptr;
             return nullptr;
         }
-        
     }
     
 }

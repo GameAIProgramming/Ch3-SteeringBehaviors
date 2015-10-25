@@ -26,7 +26,7 @@ bool HelloWorldScene::init()
     {
         return false;
     }
-
+    
     this->scheduleUpdate();
     _winSize = Director::getInstance()->getVisibleSize();
     
@@ -54,27 +54,39 @@ void HelloWorldScene::initEntites()
         vehicle->setBRadius(15.0f);
         vehicle->setPosition(Vec2(random(0.0f, 600.0f), random(0.0f, 600.0f)));
         vehicle->setTag(getNextValidID());
+        this->setBehaviorAsNormalVehicle(vehicle);
         _gameView->addChild(vehicle);
         _vehicles.pushBack(vehicle);
         
         // for DetailView Vehicle
         Vehicle* detailViewVehicle = Vehicle::create("Vehicle.png");
-        _avoidanceObstacleView->addChild(detailViewVehicle);
+        _detailView->addChild(detailViewVehicle);
         _detailViewVehicles.pushBack(detailViewVehicle);
     }
+    
+    _pursuer = Vehicle::create("pursuer.png");
+    _pursuer->setGameWorld(this);
+    _pursuer->setBRadius(15.0f);
+    _pursuer->setMaxSpeed(100.0f);
+    _pursuer->setPosition(Vec2(random(0.0f, 600.0f), random(0.0f, 600.0f)));
+    _pursuer->setTag(getNextValidID());
+    _pursuer->getSteering()->enableBehavior(BehaviorType::kWander);
+    _pursuer->getSteering()->enableBehavior(BehaviorType::kPursuit);
+    _pursuer->getSteering()->enableBehavior(BehaviorType::kObstacleAvoidance);
+    _gameView->addChild(_pursuer);
+    _vehicles.pushBack(_pursuer);
+    
+    Vehicle* detailViewPursuer = Vehicle::create("pursuer.png");
+    _detailView->addChild(detailViewPursuer);
+    _detailViewVehicles.pushBack(detailViewPursuer);
+    
     
     // initialize selected detailView vehicle and worldView vehicle.
     _selectedVehicleDetail = Vehicle::create("Vehicle.png");
     _selectedVehicleDetail->setVisible(false);
     _detailView->addChild(_selectedVehicleDetail);
     
-    _selectedVehicleWorld = _vehicles.at(0);
-    _selectedVehicleWorld->setTexture(Director::getInstance()->getTextureCache()->addImage("Vehicle_s.png"));
-    _selectedVehicleWorld->runAction(RepeatForever::create(Sequence::create(
-                                                                            ScaleTo::create(0.25f, 1.5f),
-                                                                            ScaleTo::create(0.5f, 0.5f),
-                                                                            ScaleTo::create(0.25f, 1.0f),
-                                                                            nullptr)));
+    this->setBehaviorAsSelectedVehicle(_vehicles.at(0));
     
     // Create Obstacles;
     int numOfObstacles = Prm.getValueAsInt("NumOfObstacles");
@@ -114,12 +126,35 @@ void HelloWorldScene::initEntites()
                 detailViewOb->addChild(avoidanceNode);
                 
                 _detailViewObstacles.pushBack(detailViewOb);
-                _avoidanceObstacleView->addChild(detailViewOb);
+                _detailView->addChild(detailViewOb);
                 
                 break;
             }
         }
     }
+    
+    // Create Walls
+    
+    const int numOfVertex = Prm.getValueAsInt("NumOfWallVertice");
+    std::vector<Vec2> walls
+    {
+        cocos2d::Vec2(20,20),
+        cocos2d::Vec2(580,20),
+        cocos2d::Vec2(580,580),
+        cocos2d::Vec2(20,580)
+    };
+    
+    for(int i = 0 ; i < numOfVertex - 1; ++ i)
+    {
+        Wall2D* wall = Wall2D::create(Segment(Vec2(walls.at(i)), Vec2(walls.at(i+1))));
+        _gameView->addChild(wall);
+        _walls.pushBack(wall);
+    }
+    
+    Wall2D* wall = Wall2D::create(Segment(Vec2(walls.at(numOfVertex - 1)), Vec2(walls.at(0))));
+    _gameView->addChild(wall);
+    _walls.pushBack(wall);
+    
 }
 
 void HelloWorldScene::update(float dt)
@@ -181,11 +216,11 @@ void HelloWorldScene::initUI()
     
     _gameView = Sprite::create();
     _gameView->setPosition(Vec2(20.0f, 20.0f));
-//    DrawNode* gameViewNode = DrawNode::create();
-//    gameViewNode->drawSegment(Vec2::ZERO, Vec2(600.0f, 0.0f), 1.0f, Color4F::RED);
-//    gameViewNode->drawSegment(Vec2(600.0f, 0.0f), Vec2(600.0f, 600.0f), 1.0f, Color4F::RED);
-//    gameViewNode->drawSegment(Vec2(600.0f, 600.0f), Vec2(0.0f, 600.0f), 1.0f, Color4F::RED);
-//    gameViewNode->drawSegment(Vec2(0.0f, 600.0f), Vec2::ZERO, 1.0f, Color4F::RED);
+    //    DrawNode* gameViewNode = DrawNode::create();
+    //    gameViewNode->drawSegment(Vec2::ZERO, Vec2(600.0f, 0.0f), 1.0f, Color4F::RED);
+    //    gameViewNode->drawSegment(Vec2(600.0f, 0.0f), Vec2(600.0f, 600.0f), 1.0f, Color4F::RED);
+    //    gameViewNode->drawSegment(Vec2(600.0f, 600.0f), Vec2(0.0f, 600.0f), 1.0f, Color4F::RED);
+    //    gameViewNode->drawSegment(Vec2(0.0f, 600.0f), Vec2::ZERO, 1.0f, Color4F::RED);
     //_gameView->addChild(gameViewNode);
     addChild(_gameView, 0);
     
@@ -199,9 +234,6 @@ void HelloWorldScene::initUI()
     //optionViewNode->drawSegment(Vec2(0.0f, 600.0f), Vec2::ZERO, 1.0f, Color4F::RED);
     //_optionView->addChild(optionViewNode);
     addChild(_detailView, 0);
-    
-    _avoidanceObstacleView = Sprite::create();
-    _detailView->addChild(_avoidanceObstacleView);
     
     _uiLayer = Sprite::create();
     addChild(_uiLayer, 1);
@@ -253,17 +285,12 @@ void HelloWorldScene::onTouchesBegan(const std::vector<Touch*>& touches, Event *
             if(physics::intersect(Circle(d->getPosition(), d->getBRadius()),
                                   Circle(Vec2(touchPos.x - 20.0f, touchPos.y - 20.0f), 15.0f)))
             {
-                _selectedVehicleWorld->stopAllActions();
-                _selectedVehicleWorld->setTexture(Director::getInstance()->getTextureCache()->addImage("Vehicle.png"));
-                _selectedVehicleWorld->setScale(1.0f, 1.0f);
-                _selectedVehicleWorld = d;
-                _selectedVehicleWorld->setTexture(Director::getInstance()->getTextureCache()->addImage("Vehicle_s.png"));
-                _selectedVehicleWorld->runAction(RepeatForever::create(Sequence::create(
-                                                                                        ScaleTo::create(0.25f, 1.5f),
-                                                                                        ScaleTo::create(0.5f, 0.5f),
-                                                                                        ScaleTo::create(0.25f, 1.0f),
-                                                                                        nullptr)));
-                break;
+                if(d != _pursuer)
+                {
+                    setBehaviorAsNormalVehicle(_selectedVehicleWorld);
+                    setBehaviorAsSelectedVehicle(d);
+                    break;
+                }
             }
         }
         
@@ -346,7 +373,36 @@ void HelloWorldScene::tagObstaclesWithinViewRange(realtrick::BaseEntity* entity,
     TagNeighbors(entity, _obstacles, range);
 }
 
+void HelloWorldScene::setBehaviorAsNormalVehicle(realtrick::Vehicle* vehicle)
+{
+    vehicle->stopAllActions();
+    vehicle->setMaxSpeed(Prm.getValueAsFloat("MaxSpeed"));
+    vehicle->getSteering()->disableAllBehavior();
+    vehicle->getSteering()->enableBehavior(BehaviorType::kWander);
+    vehicle->getSteering()->enableBehavior(BehaviorType::kFlee);
+    vehicle->getSteering()->enableBehavior(BehaviorType::kWallAvoidance);
+    vehicle->getSteering()->enableBehavior(BehaviorType::kObstacleAvoidance);
+    vehicle->setTexture(Director::getInstance()->getTextureCache()->addImage("Vehicle.png"));
+    vehicle->setScale(1.0f, 1.0f);
+    
+}
 
+void HelloWorldScene::setBehaviorAsSelectedVehicle(realtrick::Vehicle* vehicle)
+{
+    _selectedVehicleWorld = vehicle;
+    vehicle->setMaxSpeed(Prm.getValueAsFloat("MaxSpeed") * 2.0f);
+    vehicle->getSteering()->disableAllBehavior();
+    vehicle->getSteering()->enableBehavior(BehaviorType::kArrive);
+    vehicle->getSteering()->enableBehavior(BehaviorType::kObstacleAvoidance);
+    vehicle->getSteering()->enableBehavior(BehaviorType::kWallAvoidance);
+    vehicle->setTexture(Director::getInstance()->getTextureCache()->addImage("Vehicle_s.png"));
+    vehicle->runAction(RepeatForever::create(Sequence::create(
+                                                              ScaleTo::create(0.25f, 2.0f),
+                                                              ScaleTo::create(0.5f, 0.2f),
+                                                              ScaleTo::create(0.25f, 2.0f),
+                                                              ScaleTo::create(0.5f, 0.2f),
+                                                              nullptr)));
+}
 
 
 

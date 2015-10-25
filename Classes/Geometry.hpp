@@ -108,6 +108,22 @@ namespace realtrick
         
     };
     
+    
+    inline bool isEqual(float a, float b)
+    {
+        if (fabs(a-b) < 1E-12)
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    inline bool IsZero(float val)
+    {
+        return (-std::numeric_limits<float>::min() < val && val < std::numeric_limits<float>::min());
+    }
+    
 }
 
 

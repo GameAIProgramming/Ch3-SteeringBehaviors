@@ -97,7 +97,8 @@ namespace realtrick
         
         inline bool intersect(const Circle& circle1, const Circle& circle2)
         {
-            return (circle1.origin.getDistanceSq(circle2.origin) <= (circle1.radius + circle2.radius) * (circle1.radius + circle2.radius));
+            return (circle1.origin.getDistanceSq(circle2.origin) <=
+                    (circle1.radius + circle2.radius) * (circle1.radius + circle2.radius));
         }
         
         inline bool intersect(const Circle& circle, const Segment& segment)
@@ -243,6 +244,88 @@ namespace realtrick
 
             
             return false;
+        }
+        
+        //
+        // Temp
+        //
+        inline bool intersectGet(const Segment& segment1, const Segment& segment2, double &dist)
+        {
+            cocos2d::Vec2 A = segment1.start;
+            cocos2d::Vec2 B = segment1.end;
+            cocos2d::Vec2 C = segment2.start;
+            cocos2d::Vec2 D = segment2.end;
+            
+            float rTop = (A.y-C.y)*(D.x-C.x)-(A.x-C.x)*(D.y-C.y);
+            float sTop = (A.y-C.y)*(B.x-A.x)-(A.x-C.x)*(B.y-A.y);
+            
+            float Bot = (B.x-A.x)*(D.y-C.y)-(B.y-A.y)*(D.x-C.x);
+            
+            
+            if (Bot == 0)//parallel
+            {
+                if (isEqual(rTop, 0) && isEqual(sTop, 0))
+                {
+                    return true;
+                }
+                return false;
+            }
+            
+            float r = rTop/Bot;
+            float s = sTop/Bot;
+            
+            if( (r > 0) && (r < 1) && (s > 0) && (s < 1) )
+            {
+                dist = A.getDistance(B) * r;
+                
+                return true;
+            }
+            
+            else
+            {
+                dist = 0;
+                
+                return false;
+            }
+        }
+        
+        inline bool intersectGet(const Segment& segment1, const Segment& segment2, float &dist, cocos2d::Vec2& point)
+        {
+            cocos2d::Vec2 A = segment1.start;
+            cocos2d::Vec2 B = segment1.end;
+            cocos2d::Vec2 C = segment2.start;
+            cocos2d::Vec2 D = segment2.end;
+            
+            float rTop = (A.y-C.y)*(D.x-C.x)-(A.x-C.x)*(D.y-C.y);
+            float rBot = (B.x-A.x)*(D.y-C.y)-(B.y-A.y)*(D.x-C.x);
+            
+            float sTop = (A.y-C.y)*(B.x-A.x)-(A.x-C.x)*(B.y-A.y);
+            float sBot = (B.x-A.x)*(D.y-C.y)-(B.y-A.y)*(D.x-C.x);
+            
+            if ( (rBot == 0) || (sBot == 0))
+            {
+                //lines are parallel
+                return false;
+            }
+            
+            float r = rTop/rBot;
+            float s = sTop/sBot;
+            
+            if( (r > 0) && (r < 1) && (s > 0) && (s < 1) )
+            {
+                dist = A.getDistance(B) * r;
+                
+                point = A + r * (B - A);
+                
+                return true;
+            }
+            
+            else
+            {
+                dist = 0;
+                
+                return false;
+            }
         }
     }
 }
