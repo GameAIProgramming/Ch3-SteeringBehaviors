@@ -13,6 +13,7 @@
 #include "Transformations.hpp"
 #include "ParamLoader.hpp"
 #include "Obstacle.hpp"
+#include "Wall2D.hpp"
 
 #include <numeric>
 
@@ -47,15 +48,12 @@ namespace realtrick
         _weightPursuit = Prm.getValueAsFloat("WeightPursuit");
         _weightWander = Prm.getValueAsFloat("WeightWander");
         _weightObstacleAvoidance = Prm.getValueAsFloat("WeightObstacleAvoidance");
+        _weightWallAvoidance = Prm.getValueAsFloat("WeightWallAvoidance");
         
         float theta = kTwoPi * cocos2d::random(0.0f, 1.0f);
         _wanderTarget = cocos2d::Vec2(_wanderRadius * cos(theta), _wanderRadius * sin(theta));
         
-        enableBehavior(BehaviorType::kFlee);
-        //enableBehavior(BehaviorType::kSeek);
-        enableBehavior(BehaviorType::kArrive);
-        enableBehavior(BehaviorType::kWander);
-        enableBehavior(BehaviorType::kObstacleAvoidance);
+        _feelers.resize(3);
     }
     
     
@@ -110,11 +108,11 @@ namespace realtrick
     //
     cocos2d::Vec2 SteeringBehaviors::_seek(const cocos2d::Vec2& targetPos)
     {
-        if(_vehicle->getGameWorld()->getSelectedVehicle() == _vehicle)
-        {
-            cocos2d::Vec2 desiredVelocity = (targetPos - _vehicle->getPosition()).getNormalized() * _vehicle->getMaxSpeed();
-            return (desiredVelocity - _vehicle->getVelocity());
-        }
+        
+        cocos2d::Vec2 desiredVelocity =
+        (targetPos - _vehicle->getPosition()).getNormalized() * _vehicle->getMaxSpeed();
+        
+        return (desiredVelocity - _vehicle->getVelocity());
         
         return cocos2d::Vec2::ZERO;
     }
@@ -127,10 +125,10 @@ namespace realtrick
     //
     cocos2d::Vec2 SteeringBehaviors::_flee(const cocos2d::Vec2& targetPos)
     {
-        if((targetPos - _vehicle->getPosition()).getLengthSq() < 200.0f * 200.0f &&
-           (targetPos - _vehicle->getPosition()).getLengthSq() > 5.0f * 5.0f)
+        if((targetPos - _vehicle->getPosition()).getLengthSq() < 200.0f * 200.0f)
         {
-            cocos2d::Vec2 desiredVelocity = (_vehicle->getPosition() - targetPos).getNormalized() * _vehicle->getMaxSpeed();
+            cocos2d::Vec2 desiredVelocity =
+            (_vehicle->getPosition() - targetPos).getNormalized() * _vehicle->getMaxSpeed();
             return (desiredVelocity - _vehicle->getVelocity());
         }
         
@@ -145,21 +143,22 @@ namespace realtrick
     //
     cocos2d::Vec2 SteeringBehaviors::_arrive(const cocos2d::Vec2& targetPos, float deceleration)
     {
-        if( _vehicle->getGameWorld()->getSelectedVehicle() == _vehicle)
+        
+        cocos2d::Vec2 toTarget = targetPos - _vehicle->getPosition();
+        float dist = toTarget.getLength();
+        if(dist > 5.0f)
         {
-            cocos2d::Vec2 toTarget = targetPos - _vehicle->getPosition();
-            float dist = toTarget.getLength();
-            if(dist > 0.0f)
-            {
-                float decelerationTweaker = 0.3f;
-                float speed = dist / (deceleration * decelerationTweaker);
-                
-                speed = std::min(speed, _vehicle->getMaxSpeed());
-                cocos2d::Vec2 desiredVelocity = toTarget * speed / dist;
-                
-                return (desiredVelocity - _vehicle->getVelocity());
-            }
+            float decelerationTweaker = 0.3f;
+            float speed = dist / (deceleration * decelerationTweaker);
+            speed = std::min(speed, _vehicle->getMaxSpeed());
+            
+            cocos2d::Vec2 desiredVelocity = toTarget * speed / dist;
+            
+            return (desiredVelocity - _vehicle->getVelocity());
         }
+        
+        _vehicle->setVelocity(cocos2d::Vec2::ZERO);
+        return cocos2d::Vec2::ZERO;
         
         return cocos2d::Vec2::ZERO;
     }
@@ -179,7 +178,7 @@ namespace realtrick
             return _seek(evader->getPosition());
         }
         
-        float lookAheadTime = toEvader.getLength() / (_vehicle->getMaxSpeed() + evader->getVelocity().getLength());
+        float lookAheadTime = toEvader.getLength() / ((_vehicle->getMaxSpeed() + evader->getVelocity().getLength()));
         return _seek(evader->getPosition() + evader->getVelocity() * lookAheadTime);
     }
     
@@ -191,22 +190,17 @@ namespace realtrick
     //
     cocos2d::Vec2 SteeringBehaviors::_wander()
     {
-        if(_vehicle->getGameWorld()->getSelectedVehicle() != _vehicle)
-        {
-            float jitterThisTimeSlice = _wanderJitter * _vehicle->getTimeElapsed();
-            
-            float r = cocos2d::random(-1.0f, 1.0f);
-            _wanderTarget += cocos2d::Vec2(r * jitterThisTimeSlice, r * jitterThisTimeSlice);
-            _wanderTarget.normalize();
-            _wanderTarget *= _wanderRadius;
-            
-            cocos2d::Vec2 targetLocal = _wanderTarget + cocos2d::Vec2(_wanderDistance, 0);
-            cocos2d::Vec2 targetWorld = getWorldTransformedVector(targetLocal, _vehicle->getHeading(), _vehicle->getSide(), _vehicle->getPosition());
-            
-            return targetWorld - _vehicle->getPosition();
-        }
+        float jitterThisTimeSlice = _wanderJitter * _vehicle->getTimeElapsed();
         
-        return cocos2d::Vec2::ZERO;
+        float r = cocos2d::random(-1.0f, 1.0f);
+        _wanderTarget += cocos2d::Vec2(r * jitterThisTimeSlice, r * jitterThisTimeSlice);
+        _wanderTarget.normalize();
+        _wanderTarget *= _wanderRadius;
+        
+        cocos2d::Vec2 targetLocal = _wanderTarget + cocos2d::Vec2(_wanderDistance, 0);
+        cocos2d::Vec2 targetWorld = getWorldTransformedVector(targetLocal, _vehicle->getHeading(), _vehicle->getSide(), _vehicle->getPosition());
+        
+        return targetWorld - _vehicle->getPosition();
     }
     
     
@@ -255,7 +249,9 @@ namespace realtrick
                         // 1) (x-cx)^2 + (y-cy)^2 = r^2
                         // 2) input y to 0.
                         // 3) As a result, x is cx - sqrt(r^2 - cy^2) or cx + sqrt(r^2 - cy^2).
-                        float sqrtPart = sqrt(expandedRadius * expandedRadius - cy * cy);
+                        
+                        float sqrtPart = sqrtf(expandedRadius * expandedRadius - cy * cy);
+                        
                         float intersectPointX = cx - sqrtPart;
                         if(intersectPointX < 0.0f)
                         {
@@ -294,7 +290,55 @@ namespace realtrick
         return getWorldTransformedVector(steeringForce, _vehicle->getHeading(), _vehicle->getSide());
     }
     
-    
+    // 벽 피하기
+    cocos2d::Vec2 SteeringBehaviors::_wallAvoidance(const cocos2d::Vector<Wall2D*>& walls)
+    {
+        createFeelers();
+//        
+//        cocos2d::DrawNode* node = _vehicle->getGameWorld()->getWorldNode();
+//        node->drawSegment(_vehicle->getPosition(), _feelers[0], 0.5f, cocos2d::Color4F::RED);
+//        node->drawSegment(_vehicle->getPosition(), _feelers[1], 0.5f, cocos2d::Color4F::RED);
+//        node->drawSegment(_vehicle->getPosition(), _feelers[2], 0.5f, cocos2d::Color4F::RED);
+        
+        float distToThisIP = 0.0f;
+        float distToClosestIP = std::numeric_limits<float>::max();
+        
+        int closestWall = -1;
+        
+        cocos2d::Vec2 steeringForce = cocos2d::Vec2::ZERO;
+        cocos2d::Vec2 point = cocos2d::Vec2::ZERO;
+        cocos2d::Vec2 closestPoint = cocos2d::Vec2::ZERO;
+
+        for(unsigned int f = 0 ; f < _feelers.size() ; ++ f)
+        {
+            for(unsigned int w = 0 ; w < walls.size() ; ++ w)
+            {
+               if(physics::intersectGet(Segment(_vehicle->getPosition(), _feelers.at(f)),
+                                        Segment(walls.at(w)->getStart(), walls.at(w)->getEnd()),
+                                        distToThisIP,
+                                        point))
+               {
+                   if(distToThisIP < distToClosestIP)
+                   {
+                       distToClosestIP = distToThisIP;
+                       closestWall = w;
+                       closestPoint = point;
+                   }
+               }
+            } // next wall
+            
+            if( closestWall >= 0)
+            {
+                cocos2d::Vec2 overShoot = _feelers.at(f) - closestPoint;
+                steeringForce = walls.at(closestWall)->getNormal() * overShoot.getLength();
+            }
+            
+        } // next feeler
+        
+        //node->drawDot(closestPoint, 3.0f, cocos2d::Color4F::MAGENTA);
+        
+        return steeringForce;
+    }
     
     
     
@@ -335,6 +379,16 @@ namespace realtrick
         {
             _steeringForce += _obstacleAvoidance(_vehicle->getGameWorld()->getObstacles()) * _weightObstacleAvoidance;
         }
+        
+        if(isOnBehavior(BehaviorType::kPursuit))
+        {
+            _steeringForce += _pursuit(selectedVehicle) * _weightPursuit;
+        }
+        
+        if(isOnBehavior(BehaviorType::kWallAvoidance))
+        {
+            _steeringForce += _wallAvoidance(_vehicle->getGameWorld()->getWalls()) * _weightWallAvoidance;
+        }
     }
     
     
@@ -358,6 +412,21 @@ namespace realtrick
     void SteeringBehaviors::_calculatedDithered()
     {
         
+    }
+    
+    void SteeringBehaviors::createFeelers()
+    {
+        _feelers[0] = _vehicle->getPosition() + _detectionBoxLength * _vehicle->getHeading();
+        
+        Mat3 rotMat;
+        rotMat.rotate(MATH_DEG_TO_RAD(-30.0f));
+        cocos2d::Vec2 temp = rotMat.getTransformedVector(_vehicle->getHeading());
+        _feelers[1] = _vehicle->getPosition() + _detectionBoxLength / 2.0f * temp;
+        
+        rotMat.identity();
+        rotMat.rotate(MATH_DEG_TO_RAD(30.0f));
+        temp = rotMat.getTransformedVector(_vehicle->getHeading());
+        _feelers[2] = _vehicle->getPosition() + _detectionBoxLength / 2.0f * temp;
     }
     
 }

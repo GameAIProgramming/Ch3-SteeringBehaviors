@@ -37,6 +37,9 @@ namespace realtrick
         inline bool intersect(const Polygon& polygon, const Segment& segment);
         inline bool intersect(const Polygon& polygon1, const Polygon& polygon2);
         
+        inline bool intersectGet(const Segment& segment1, const Segment& segment2, float &dist);
+        inline bool intersectGet(const Segment& segment1, const Segment& segment2, float &dist, cocos2d::Vec2& point);
+        
     };
     
     

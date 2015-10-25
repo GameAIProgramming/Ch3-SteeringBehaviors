@@ -4,6 +4,7 @@
 
 #include "Vehicle.hpp"
 #include "Obstacle.hpp"
+#include "Wall2D.hpp"
 
 enum class DetailViewMode : short
 {
@@ -26,16 +27,17 @@ private:
     
     cocos2d::Sprite*                        _gameView;
     cocos2d::Sprite*                        _detailView;
-    cocos2d::Sprite*                        _avoidanceObstacleView;
     
     cocos2d::Vector<realtrick::Vehicle*>    _vehicles;
     cocos2d::Vector<realtrick::Obstacle*>   _obstacles;
+    cocos2d::Vector<realtrick::Wall2D*>     _walls;
     
     cocos2d::Vector<realtrick::Vehicle*>    _detailViewVehicles;
     cocos2d::Vector<realtrick::Obstacle*>   _detailViewObstacles;
     
     realtrick::Vehicle*                     _selectedVehicleDetail;
     realtrick::Vehicle*                     _selectedVehicleWorld;
+    realtrick::Vehicle*                     _pursuer;
     
     cocos2d::DrawNode*                      _worldNode;
     cocos2d::DrawNode*                      _detailNode;
@@ -57,14 +59,18 @@ public:
     cocos2d::Sprite*                        getCrossHair() const                { return _crossHair; }
     cocos2d::Vector<realtrick::Obstacle*>   getObstacles() const                { return _obstacles; }
     cocos2d::Vector<realtrick::Vehicle*>    getVehicles() const                 { return _vehicles; }
+    cocos2d::Vector<realtrick::Wall2D*>     getWalls() const                    { return _walls; }
     cocos2d::DrawNode*                      getWorldNode() const                { return _worldNode; }
     cocos2d::DrawNode*                      getDetailNode() const               { return _detailNode; }
     realtrick::Vehicle*                     getSelectedVehicle() const          { return _selectedVehicleWorld; }
+    realtrick::Vehicle*                     getPursuer() const                  { return _pursuer; }
     
     void initEntites();
     void initUI();
     float calAngle(const cocos2d::Vec2& v);
     void tagVehiclesWithinViewRange(realtrick::BaseEntity* entity, float range);
     void tagObstaclesWithinViewRange(realtrick::BaseEntity* entity, float range);
+    void setBehaviorAsNormalVehicle(realtrick::Vehicle* vehicle);
+    void setBehaviorAsSelectedVehicle(realtrick::Vehicle* vehicle);
     
 };

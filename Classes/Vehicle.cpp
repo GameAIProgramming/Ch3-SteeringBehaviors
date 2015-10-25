@@ -42,6 +42,8 @@ namespace realtrick
         _timeElapsed = dt;
         
         cocos2d::Vec2 oldPos = getPosition();
+        
+        
         cocos2d::Vec2 steeringForce = _steering->calculate();
         cocos2d::Vec2 acceleration = steeringForce / getMass();
         
