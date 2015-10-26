@@ -379,7 +379,8 @@ void HelloWorldScene::setBehaviorAsNormalVehicle(realtrick::Vehicle* vehicle)
     vehicle->setMaxSpeed(Prm.getValueAsFloat("MaxSpeed"));
     vehicle->getSteering()->disableAllBehavior();
     vehicle->getSteering()->enableBehavior(BehaviorType::kWander);
-    vehicle->getSteering()->enableBehavior(BehaviorType::kFlee);
+    vehicle->getSteering()->enableBehavior(BehaviorType::kHide);
+    //vehicle->getSteering()->enableBehavior(BehaviorType::kOffsetPursuit);
     vehicle->getSteering()->enableBehavior(BehaviorType::kWallAvoidance);
     vehicle->getSteering()->enableBehavior(BehaviorType::kObstacleAvoidance);
     vehicle->setTexture(Director::getInstance()->getTextureCache()->addImage("Vehicle.png"));

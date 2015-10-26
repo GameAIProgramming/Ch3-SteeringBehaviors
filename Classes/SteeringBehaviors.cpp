@@ -49,6 +49,10 @@ namespace realtrick
         _weightWander = Prm.getValueAsFloat("WeightWander");
         _weightObstacleAvoidance = Prm.getValueAsFloat("WeightObstacleAvoidance");
         _weightWallAvoidance = Prm.getValueAsFloat("WeightWallAvoidance");
+        _weightEvade = Prm.getValueAsFloat("WeightEvade");
+        _weightHide = Prm.getValueAsFloat("WeightHide");
+        _weightInterpose = Prm.getValueAsFloat("WeightInterpose");
+        _weightOffsetPursuit = Prm.getValueAsFloat("WeightOffsetPursuit");
         
         float theta = kTwoPi * cocos2d::random(0.0f, 1.0f);
         _wanderTarget = cocos2d::Vec2(_wanderRadius * cos(theta), _wanderRadius * sin(theta));
@@ -178,8 +182,21 @@ namespace realtrick
             return _seek(evader->getPosition());
         }
         
-        float lookAheadTime = toEvader.getLength() / ((_vehicle->getMaxSpeed() + evader->getVelocity().getLength()));
+        float lookAheadTime = toEvader.getLength() / ((_vehicle->getMaxSpeed() + evader->getSpeed()));
         return _seek(evader->getPosition() + evader->getVelocity() * lookAheadTime);
+    }
+    
+    
+    
+    //
+    // Evade
+    //
+    cocos2d::Vec2 SteeringBehaviors::_evade(const Vehicle* pursuer)
+    {
+        cocos2d::Vec2 toPursuer = pursuer->getPosition() - _vehicle->getPosition();
+        float lookAheadTime = toPursuer.getLength() / ((_vehicle->getMaxSpeed() + pursuer->getSpeed()));
+        return _flee(pursuer->getPosition() + pursuer->getVelocity() * lookAheadTime);
+
     }
     
     
@@ -245,10 +262,6 @@ namespace realtrick
                         float cx = localPos.x;
                         float cy = localPos.y;
                         
-                        // circle, line's intersection(because of local space, equation's y is zero)
-                        // 1) (x-cx)^2 + (y-cy)^2 = r^2
-                        // 2) input y to 0.
-                        // 3) As a result, x is cx - sqrt(r^2 - cy^2) or cx + sqrt(r^2 - cy^2).
                         
                         float sqrtPart = sqrtf(expandedRadius * expandedRadius - cy * cy);
                         
@@ -290,15 +303,14 @@ namespace realtrick
         return getWorldTransformedVector(steeringForce, _vehicle->getHeading(), _vehicle->getSide());
     }
     
-    // 벽 피하기
+    
+    
+    //
+    // Wall Avoidance
+    //
     cocos2d::Vec2 SteeringBehaviors::_wallAvoidance(const cocos2d::Vector<Wall2D*>& walls)
     {
-        createFeelers();
-//        
-//        cocos2d::DrawNode* node = _vehicle->getGameWorld()->getWorldNode();
-//        node->drawSegment(_vehicle->getPosition(), _feelers[0], 0.5f, cocos2d::Color4F::RED);
-//        node->drawSegment(_vehicle->getPosition(), _feelers[1], 0.5f, cocos2d::Color4F::RED);
-//        node->drawSegment(_vehicle->getPosition(), _feelers[2], 0.5f, cocos2d::Color4F::RED);
+        _createFeelers();
         
         float distToThisIP = 0.0f;
         float distToClosestIP = std::numeric_limits<float>::max();
@@ -335,12 +347,80 @@ namespace realtrick
             
         } // next feeler
         
-        //node->drawDot(closestPoint, 3.0f, cocos2d::Color4F::MAGENTA);
-        
         return steeringForce;
     }
     
     
+    
+    //
+    // interpose
+    //
+    cocos2d::Vec2 SteeringBehaviors::_interpose(const Vehicle* vehicleA, const Vehicle* vehicleB)
+    {
+        cocos2d::Vec2 midPoint = (vehicleA->getPosition() + vehicleB->getPosition()) / 2.0f;
+        
+        float timeToReachMidPoint = midPoint.getDistance(_vehicle->getPosition()) / _vehicle->getMaxSpeed();
+        
+        cocos2d::Vec2 posA = vehicleA->getPosition() + vehicleA->getVelocity() * timeToReachMidPoint;
+        cocos2d::Vec2 posB = vehicleB->getPosition() + vehicleB->getVelocity() * timeToReachMidPoint;
+        
+        midPoint = (posA + posB) / 2.0f;
+        return _arrive(midPoint, 1.0f);
+    }
+    
+    
+    cocos2d::Vec2 SteeringBehaviors::_getHidingPosition(const cocos2d::Vec2& posObstacle, const float radiusObstacle, const cocos2d::Vec2 hunterPos)
+    {
+        const float distanceFromBoundary = 30.0f;
+        float distAway = radiusObstacle + distanceFromBoundary;
+        
+        cocos2d::Vec2 toObstacle = (posObstacle - hunterPos).getNormalized();
+        
+        return (toObstacle * distAway) + posObstacle;
+    }
+    
+    
+    //
+    // Hide
+    //
+    cocos2d::Vec2 SteeringBehaviors::_hide(const Vehicle* hunter, const cocos2d::Vector<Obstacle*>& obstacles)
+    {
+        if((hunter->getPosition() - _vehicle->getPosition()).getLengthSq() > 200.0f * 200.0f)
+            return cocos2d::Vec2::ZERO;
+        
+        float distToClosest = std::numeric_limits<float>::max();
+        cocos2d::Vec2 bestHideSpot;
+        
+        for(auto iter = obstacles.begin(); iter != obstacles.end(); ++iter)
+        {
+            cocos2d::Vec2 hidingSpot = _getHidingPosition((*iter)->getPosition(), (*iter)->getBRadius(), hunter->getPosition());
+            float dist = _vehicle->getPosition().getDistanceSq(hidingSpot);
+            if(dist < distToClosest)
+            {
+                distToClosest = dist;
+                bestHideSpot = hidingSpot;
+            }
+        }
+        
+        if(distToClosest == std::numeric_limits<float>::max())
+        {
+            return _evade(hunter);
+        }
+        
+        return _arrive(bestHideSpot, 1.0f);
+    }
+    
+    //
+    // Offset Pursuit
+    //
+    cocos2d::Vec2 SteeringBehaviors::_offsetPursuit(const Vehicle* leader, const cocos2d::Vec2& offset)
+    {
+        cocos2d::Vec2 worldOffsetPos = getWorldTransformedVector(offset, leader->getHeading(), leader->getSide(), leader->getPosition());
+        cocos2d::Vec2 toOffset = worldOffsetPos - _vehicle->getPosition();
+        float lookAheadTime = toOffset.getLength() / (_vehicle->getMaxSpeed() + leader->getSpeed());
+        
+        return _arrive(worldOffsetPos + leader->getVelocity() * lookAheadTime, 1.0f);
+    }
     
     
     //
@@ -385,9 +465,24 @@ namespace realtrick
             _steeringForce += _pursuit(selectedVehicle) * _weightPursuit;
         }
         
+        if(isOnBehavior(BehaviorType::kEvade))
+        {
+            _steeringForce += _evade(selectedVehicle) * _weightEvade;
+        }
+        
         if(isOnBehavior(BehaviorType::kWallAvoidance))
         {
             _steeringForce += _wallAvoidance(_vehicle->getGameWorld()->getWalls()) * _weightWallAvoidance;
+        }
+        
+        if(isOnBehavior(BehaviorType::kHide))
+        {
+            _steeringForce += _hide(selectedVehicle, _vehicle->getGameWorld()->getObstacles()) * _weightHide;
+        }
+        
+        if(isOnBehavior(BehaviorType::kOffsetPursuit))
+        {
+            _steeringForce += _offsetPursuit(selectedVehicle, cocos2d::Vec2(20, 20)) * _weightOffsetPursuit;
         }
     }
     
@@ -414,7 +509,7 @@ namespace realtrick
         
     }
     
-    void SteeringBehaviors::createFeelers()
+    void SteeringBehaviors::_createFeelers()
     {
         _feelers[0] = _vehicle->getPosition() + _detectionBoxLength * _vehicle->getHeading();
         

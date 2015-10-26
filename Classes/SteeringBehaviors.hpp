@@ -79,6 +79,10 @@ namespace realtrick
         float                           _weightWander;
         float                           _weightObstacleAvoidance;
         float                           _weightWallAvoidance;
+        float                           _weightEvade;
+        float                           _weightHide;
+        float                           _weightInterpose;
+        float                           _weightOffsetPursuit;
         
         std::vector<cocos2d::Vec2>      _feelers;
         
@@ -96,6 +100,9 @@ namespace realtrick
         // 추적하기
         cocos2d::Vec2 _pursuit(const Vehicle* evader);
         
+        // 도피하기
+        cocos2d::Vec2 _evade(const Vehicle* pursuer);
+        
         // 배회하기
         cocos2d::Vec2 _wander();
         
@@ -105,9 +112,21 @@ namespace realtrick
         // 벽 피하기
         cocos2d::Vec2 _wallAvoidance(const cocos2d::Vector<Wall2D*>& walls);
         
+        // 끼워 넣기
+        cocos2d::Vec2 _interpose(const Vehicle* vehicleA, const Vehicle* vehicleB);
+        
+        // 숨기기
+        cocos2d::Vec2 _hide(const Vehicle* target, const cocos2d::Vector<Obstacle*>& obstacles);
+        
+        // 오프셋 추격하기
+        cocos2d::Vec2 _offsetPursuit(const Vehicle* leader, const cocos2d::Vec2& offset);
+        
         void _calculateWeightedSum();
         void _calculatePrioritized();
         void _calculatedDithered();
+        
+        void _createFeelers();
+        cocos2d::Vec2 _getHidingPosition(const cocos2d::Vec2& posObstacle, const float radiusObstacle, const cocos2d::Vec2 hunterPos);
         
     public:
         
@@ -127,8 +146,6 @@ namespace realtrick
         void disableBehavior(BehaviorType type)     { if(isOnBehavior(type)) _flag ^= (int)type; }
         
         void disableAllBehavior()                   { _flag = 0; }
-        
-        void createFeelers();
 
     };
     

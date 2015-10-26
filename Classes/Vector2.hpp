@@ -135,7 +135,6 @@ namespace realtrick
     
 }
 
-
 #include "Vector2.inl"
 
 
